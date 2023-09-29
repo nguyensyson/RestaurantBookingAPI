@@ -13,30 +13,38 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "reservation_dish_detail")
-public class ReservationDishDetail {
+@Table(name = "reservation_product")
+public class ReservationProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id", referencedColumnName = "id")
-    private Booking booking;
+    @JoinColumn(name = "reservation_id", referencedColumnName = "id")
+    private Reservation reservation;
+
     @Column(name = "avatar_product")
     private String avatarProduct;
+
     @Column(name = "name_product")
     private String nameProduct;
+
     @Column(name = "price")
     private BigDecimal price;
+
     @Column(name = "quantity")
     private Integer quantity;
+
     @Column(name = "created_at")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate createdAt;
+
     @Column(name = "update_at")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate updateAt;

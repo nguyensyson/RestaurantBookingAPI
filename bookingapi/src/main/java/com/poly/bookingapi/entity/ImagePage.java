@@ -18,15 +18,20 @@ public class ImagePage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notification_id", referencedColumnName = "id")
     private Notification notification;
+
     @Column(name = "title")
     private String title;
+
     @Column(name = "image")
     private String image;
+
     @Column(name = "created_at")
     private LocalDate createdAt;
+
     @Column(name = "update_at")
     private LocalDate updateAt;
 }

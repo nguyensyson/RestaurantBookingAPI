@@ -19,21 +19,28 @@ public class ProductEvaluate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
+
     @Column(name = "content")
     private String content;
+
     @Column(name = "point")
     private Integer point;
+
     @Column(name = "status")
     private Integer status;
+
     @Column(name = "created_at")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate createdAt;
+
     @Column(name = "update_at")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate updateAt;

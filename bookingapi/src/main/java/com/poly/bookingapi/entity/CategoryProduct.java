@@ -20,6 +20,9 @@ public class CategoryProduct {
     @Column(name = "id")
     private Integer id;
 
+    @Column(name = "avatar")
+    private String avatar;
+
     @Column(name = "name_category")
     private String nameCategory;
 
