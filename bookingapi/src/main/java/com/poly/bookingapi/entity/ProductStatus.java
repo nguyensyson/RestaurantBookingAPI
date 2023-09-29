@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,11 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "payment_methods")
-public class PaymentMethods {
+@Table(name = "product_status")
+public class ProductStatus {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy =  GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
@@ -24,11 +25,13 @@ public class PaymentMethods {
     private String title;
 
     @Column(name = "created_at")
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate createdAt;
 
     @Column(name = "update_at")
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate updateAt;
 
-    @OneToMany(mappedBy = "paymentMethods", fetch = FetchType.LAZY)
-    private List<PaymentDetail> listPaymentDetail;
+    @OneToMany(mappedBy = "status", fetch = FetchType.LAZY)
+    private List<Product> listImage;
 }
