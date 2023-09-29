@@ -48,6 +48,7 @@ public class Discount {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     @Column(name = "update_at")
     private LocalDate updateAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", referencedColumnName = "id")
     private Admin updatedBy;

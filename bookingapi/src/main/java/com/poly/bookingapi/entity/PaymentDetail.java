@@ -19,16 +19,21 @@ public class PaymentDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invoice_id", referencedColumnName = "id")
-    private Invoice invoice;
+    @JoinColumn(name = "reservation_id", referencedColumnName = "id")
+    private Reservation reservation;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_methods_id", referencedColumnName = "id")
     private PaymentMethods paymentMethods;
+
     @Column(name = "price")
     private BigDecimal price;
+
     @Column(name = "created_at")
     private LocalDate createdAt;
+
     @Column(name = "update_at")
     private LocalDate updateAt;
 }
