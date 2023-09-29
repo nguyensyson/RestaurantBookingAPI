@@ -20,17 +20,25 @@ public class DinnerTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+
+    @Column(name = "number_of_seats")
+    private Integer numberOfSeats;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_type_id", referencedColumnName = "id")
-    private TableType tableType;
+    @JoinColumn(name = "dining_room_id", referencedColumnName = "id")
+    private DiningRoom diningRoom;
+
     @Column(name = "status")
     private Integer status;
+
     @Column(name = "created_at")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate createdAt;
+
     @Column(name = "update_at")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate updateAt;
+
     @OneToMany(mappedBy = "table", fetch = FetchType.LAZY)
     private List<TableReservationDetail> listTableDetail;
 }

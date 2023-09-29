@@ -13,25 +13,25 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "table_type")
-public class TableType {
+@Table(name = "reservation_status")
+public class ReservationStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+
     @Column(name = "title")
     private String title;
-    @Column(name = "number_of_seats")
-    private Integer numberOfSeats;
-    @Column(name = "status")
-    private Integer status;
+
     @Column(name = "created_at")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate createdAt;
+
     @Column(name = "update_at")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate updateAt;
-    @OneToMany(mappedBy = "tableType", fetch = FetchType.LAZY)
-    private List<DinnerTable> listTable;
+
+    @OneToMany(mappedBy = "status", fetch = FetchType.LAZY)
+    private List<Reservation> listReservation;
 }

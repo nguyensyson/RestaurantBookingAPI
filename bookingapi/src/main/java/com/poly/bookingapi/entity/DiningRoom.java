@@ -13,19 +13,20 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "notification")
-public class Notification {
+@Table(name = "dining_room")
+public class DiningRoom {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy =  GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "title")
-    private String title;
+    @Column(name = "maximum_occupancy")
+    private Integer maximumOccupancy;
 
-    @Column(name = "content")
-    private String content;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private CategoryDiningRoom category;
 
     @Column(name = "created_at")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -35,9 +36,6 @@ public class Notification {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate updateAt;
 
-    @OneToMany(mappedBy = "notification", fetch = FetchType.LAZY)
-    private List<ImagePage> listImage;
-
-    @OneToMany(mappedBy = "notification", fetch = FetchType.LAZY)
-    private List<Voucher> listVoucher;
+    @OneToMany(mappedBy = "diningRoom", fetch = FetchType.LAZY)
+    private List<DinnerTable> listDinnerTable;
 }
