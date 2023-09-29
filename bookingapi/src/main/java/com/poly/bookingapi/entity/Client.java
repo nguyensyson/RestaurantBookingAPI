@@ -50,10 +50,10 @@ public class Client {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     @Column(name = "update_at")
     private LocalDate updateAt;
+
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private List<ProductEvaluate> listProductEvaluate;
+
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
-    private List<Booking> listBooking;
-    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
-    private List<Invoice> listInvoice;
+    private List<Reservation> listReservation;
 }
