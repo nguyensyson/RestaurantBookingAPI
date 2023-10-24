@@ -31,10 +31,16 @@ public class CategoryDiningRoom {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate createdAt;
 
+    @Column(name = "fee")
+    private BigDecimal fee;
+
     @Column(name = "update_at")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate updateAt;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<DiningRoom> listImage;
+
+    @OneToMany(mappedBy = "categoryDiningRoom", fetch = FetchType.LAZY)
+    private List<Reservation> listReservation;
 }
