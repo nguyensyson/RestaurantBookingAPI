@@ -40,6 +40,10 @@ public class Reservation {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate reservationDate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_dining_room_id", referencedColumnName = "id")
+    private CategoryDiningRoom categoryDiningRoom;
+
     @Column(name = "start_time")
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime startTime;
@@ -86,9 +90,6 @@ public class Reservation {
 
     @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY)
     private List<ReservationProduct> listReservationProduct;
-
-    @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY)
-    private List<TableReservationDetail> listTableDetail;
 
     @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY)
     private List<PaymentDetail> listPaymentDetail;
