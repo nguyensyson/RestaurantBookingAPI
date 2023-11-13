@@ -39,6 +39,4 @@ public class DinnerTable {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate updateAt;
 
-    @OneToMany(mappedBy = "table", fetch = FetchType.LAZY)
-    private List<TableReservationDetail> listTableDetail;
 }
