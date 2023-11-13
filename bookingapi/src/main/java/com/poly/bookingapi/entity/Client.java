@@ -1,5 +1,8 @@
 package com.poly.bookingapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.poly.bookingapi.request.ClientRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +26,7 @@ public class Client {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", referencedColumnName = "id")
+    @JsonIgnore
     private Account account;
 
     @Column(name = "user_name")
@@ -55,5 +59,24 @@ public class Client {
     private List<ProductEvaluate> listProductEvaluate;
 
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Reservation> listReservation;
+
+
+
+    public ClientRequest loadDataClientRequest(){
+        ClientRequest clientRequest = new ClientRequest();
+
+        clientRequest.setUsername(username);
+        clientRequest.setAvatar(avatar);
+        clientRequest.setFullname(fullname);
+        clientRequest.setEmail(email);
+        clientRequest.setAddress(address);
+        clientRequest.setSdt(sdt);
+        clientRequest.setCreateAt(createAt);
+        clientRequest.setUpdateAt(updateAt);
+
+        return clientRequest;
+
+    }
 }
