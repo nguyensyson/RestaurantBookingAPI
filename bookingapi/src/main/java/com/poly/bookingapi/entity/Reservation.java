@@ -1,7 +1,9 @@
 package com.poly.bookingapi.entity;
 
+import com.poly.bookingapi.dto.ReservationDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Entity
 @Table(name = "reservation")
 public class Reservation {
@@ -93,4 +96,22 @@ public class Reservation {
 
     @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY)
     private List<PaymentDetail> listPaymentDetail;
+
+    public ReservationDTO loadData(){
+        ReservationDTO reservation = new ReservationDTO();
+        reservation.setSdt(sdt);
+        reservation.setNumberOfPeopleBooked(numberOfPeopleBooked);
+        reservation.setReservationDate(reservationDate);
+//        reservation.setIdCategoryDiningRoom(categoryDiningRoom.getId());
+//        reservation.setIdStatus(status.getId());
+//        reservation.setIdClient(client.getId());
+//        reservation.setIdVoucher(voucher.getId());
+//        reservation.setIdAdmin(updatedBy.getId());
+        reservation.setStartTime(startTime);
+        reservation.setEndTime(endTime);
+        reservation.setDelayTime(delayTime);
+        reservation.setUpfrontPrice(upfrontPrice);
+        reservation.setCreatedAt(createdAt);
+        return reservation;
+    }
 }
