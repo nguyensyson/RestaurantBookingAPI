@@ -1,7 +1,9 @@
 package com.poly.bookingapi.entity;
 
+import com.poly.bookingapi.dto.DiningRoomDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Entity
 @Table(name = "dining_room")
 public class DiningRoom {
@@ -38,4 +41,9 @@ public class DiningRoom {
 
     @OneToMany(mappedBy = "diningRoom", fetch = FetchType.LAZY)
     private List<DinnerTable> listDinnerTable;
+
+//    public DiningRoomDTO loadData(DiningRoomDTO diningRoomDTO){
+//        diningRoomDTO.setMaximumOccupancy(maximumOccupancy);
+//        return diningRoomDTO;
+//    }
 }
