@@ -1,7 +1,9 @@
 package com.poly.bookingapi.entity;
 
+import com.poly.bookingapi.dto.VoucherDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Entity
 @Table(name = "voucher")
 public class Voucher {
@@ -60,4 +63,14 @@ public class Voucher {
 
     @OneToMany(mappedBy = "voucher", fetch = FetchType.LAZY)
     private List<Reservation> listInvoice;
+
+    public VoucherDTO loadData (VoucherDTO voucher){
+        voucher.setTitle(title);
+        voucher.setVoucherValue(voucherValue);
+        voucher.setStatus(status);
+        voucher.setRequirement(requirement);
+        voucher.setStartDate(startDate);
+        voucher.setEndDate(endDate);
+        return voucher;
+    }
 }
