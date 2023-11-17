@@ -1,5 +1,6 @@
 package com.poly.bookingapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class Product {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private CategoryProduct category;
 
@@ -36,6 +38,7 @@ public class Product {
     private BigDecimal price;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "discount_id", referencedColumnName = "id")
     private Discount discount;
 
@@ -43,6 +46,7 @@ public class Product {
     private String introduce;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "status_id", referencedColumnName = "id")
     private ProductStatus status;
 
@@ -55,21 +59,27 @@ public class Product {
     private LocalDate updateAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "updated_by", referencedColumnName = "id")
     private Admin updatedBy;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<ImageProduct> listImage;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<ProductEvaluate> listEvaluate;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<ReservationProduct> listReservationProduct;
 
     @OneToMany(mappedBy = "combo", fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<ComboDetail> listCombo;
 
     @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<ComboDetail> listitem;
 }
