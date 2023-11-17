@@ -1,8 +1,12 @@
 package com.poly.bookingapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.poly.bookingapi.entity.ImageProduct;
 import com.poly.bookingapi.entity.Product;
+import com.poly.bookingapi.repository.ImageProductRepository;
+import com.poly.bookingapi.repository.ProductRepository;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 
@@ -17,29 +21,11 @@ public class ImageProductDTO {
 
     private String images;
 
-    private Product product;
+    private Integer product;
 
     private LocalDate createdAt;
 
     private LocalDate updateAt;
 
-    public ImageProduct loadDataView() {
-        ImageProduct imageProduct = new ImageProduct();
-        imageProduct.setImages(images);
-        imageProduct.setProduct(product);
-        imageProduct.setCreatedAt(createdAt);
-        imageProduct.setUpdateAt(createdAt);
-        imageProduct.setUpdateAt(updateAt);
-        return imageProduct;
-    }
-
-    public ImageProduct loadDataView(ImageProduct imageProduct)  {
-        imageProduct.setImages(images);
-        imageProduct.setProduct(product);
-        imageProduct.setCreatedAt(createdAt);
-        imageProduct.setUpdateAt(createdAt);
-        imageProduct.setUpdateAt(updateAt);
-        return imageProduct;
-    }
 
 }

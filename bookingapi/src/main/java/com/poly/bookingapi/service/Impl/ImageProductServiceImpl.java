@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.poly.bookingapi.dto.ImageProductDTO;
 import com.poly.bookingapi.entity.ImageProduct;
 import com.poly.bookingapi.repository.ImageProductRepository;
+import com.poly.bookingapi.repository.ProductRepository;
 import com.poly.bookingapi.service.ImageProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,9 @@ import java.util.List;
 public class ImageProductServiceImpl implements ImageProductService {
     @Autowired
     ImageProductRepository imageProductRepository;
+
+    @Autowired
+    ProductRepository productRepository;
 
     @Autowired
     private Cloudinary cloudinaryConfig;
@@ -39,7 +43,7 @@ public class ImageProductServiceImpl implements ImageProductService {
     public ImageProduct add(ImageProductDTO imageProductDTO, String urlImage) {
         ImageProduct imageProduct = ImageProduct.builder()
                 .images(urlImage)
-                .product(imageProductDTO.getProduct())
+                .product(productRepository.findById(imageProductDTO.getProduct()).get())
                 .createdAt(imageProductDTO.getCreatedAt())
                 .updateAt(imageProductDTO.getUpdateAt()).build();
         return imageProductRepository.save(imageProduct);
