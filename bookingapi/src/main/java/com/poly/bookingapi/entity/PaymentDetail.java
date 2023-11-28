@@ -29,7 +29,7 @@ public class PaymentDetail {
     private PaymentMethods paymentMethods;
 
     @Column(name = "price")
-    private BigDecimal price;
+    private Long price;
 
     @Column(name = "created_at")
     private LocalDate createdAt;

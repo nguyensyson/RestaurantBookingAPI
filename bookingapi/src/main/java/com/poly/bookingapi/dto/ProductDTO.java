@@ -1,7 +1,6 @@
 package com.poly.bookingapi.dto;
 
-import com.poly.bookingapi.entity.Product;
-import com.poly.bookingapi.entity.Reservation;
+import com.poly.bookingapi.entity.Discount;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,11 +10,12 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationPorductDTO {
+public class ProductDTO {
 
-    private Product product;
+    private Integer id;
     private String nameProduct;
     private Long price;
     private Integer quantity;
-
+    private Discount discount;
+    private Long newPrice;
 }
