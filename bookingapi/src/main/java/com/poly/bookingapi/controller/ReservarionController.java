@@ -3,6 +3,7 @@ package com.poly.bookingapi.controller;
 import com.poly.bookingapi.dto.ReservationDTO;
 import com.poly.bookingapi.entity.CategoryDiningRoom;
 import com.poly.bookingapi.entity.DiningRoom;
+import com.poly.bookingapi.respon.MessageResponse;
 import com.poly.bookingapi.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,16 +24,30 @@ public class ReservarionController {
 
     @PostMapping("/addByUser")
     public ResponseEntity<?>addByUser(@RequestBody ReservationDTO reservationDTO){
-        return  ResponseEntity.ok(reservationService.addByUser(reservationDTO));
+        reservationService.addByUser(reservationDTO);
+        return  ResponseEntity.ok(new MessageResponse("yes!!"));
+    }
+
+    @PostMapping("/addByAdmin")
+    public ResponseEntity<?>addByAdmin(@RequestBody ReservationDTO reservationDTO){
+        reservationService.addByAdmin(reservationDTO);
+        return  ResponseEntity.ok(new MessageResponse("yes!!"));
     }
 
     @PutMapping("/checkin/{id}")
     public  ResponseEntity<?>checkIn(@RequestBody ReservationDTO reservationDTO,
+                                     @PathVariable Integer id,
                                      @RequestBody CategoryDiningRoom categoryDiningRoom,
-                                     @RequestBody DiningRoom diningRoom,
-                                     @PathVariable Integer id){
+                                     @RequestBody DiningRoom diningRoom){
         reservationService.addDiningRoom(categoryDiningRoom,categoryDiningRoom.getId());
         reservationService.addDinnerTable(diningRoom,diningRoom.getId());
-        return ResponseEntity.ok(reservationService.checkIn(reservationDTO, id));
+        reservationService.checkIn(reservationDTO, id);
+        return ResponseEntity.ok(new MessageResponse("yes!!"));
+    }
+
+    @GetMapping("/getCountReservation")
+    public ResponseEntity<?>getCountReservaion(){
+
+        return ResponseEntity.ok(reservationService.countReservation());
     }
 }

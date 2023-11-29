@@ -39,7 +39,7 @@ public class Voucher {
     private Integer status;
 
     @Column(name = "requirement")
-    private BigDecimal requirement;
+    private Long requirement;
 
     @Column(name = "start_date")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
