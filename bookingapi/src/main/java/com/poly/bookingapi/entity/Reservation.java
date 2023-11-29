@@ -68,16 +68,16 @@ public class Reservation {
     private Voucher voucher;
 
     @Column(name = "upfront_price")
-    private BigDecimal upfrontPrice;
+    private Long upfrontPrice;
 
     @Column(name = "original_price")
-    private BigDecimal originalPrice;
+    private Long originalPrice;
 
     @Column(name = "actual_price")
-    private BigDecimal actualPrice;
+    private Long actualPrice;
 
     @Column(name = "price_to_pay")
-    private BigDecimal priceToPay;
+    private Long priceToPay;
 
     @Column(name = "created_at")
     @DateTimeFormat(pattern = "dd/MM/yyyy")

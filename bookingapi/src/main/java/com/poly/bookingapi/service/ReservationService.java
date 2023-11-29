@@ -10,10 +10,11 @@ import java.util.List;
 public interface
 ReservationService {
     List<ReservationDTO> getAll();
-    Reservation addByUser(ReservationDTO reservationDTO);
-    Reservation addByAdmin(ReservationDTO reservationDTO);
+    void addByUser(ReservationDTO reservationDTO);
+    void addByAdmin(ReservationDTO reservationDTO);
     void addDiningRoom(CategoryDiningRoom categoryDiningRoom,Integer idRoom);
     void addDinnerTable(DiningRoom diningRoom, Integer idTable);
+    Integer countReservation();
 //    void addVoucher(Reservation reservation,Integer voucher);
-    Reservation checkIn(ReservationDTO reservationDTO, Integer id);
+    void checkIn(ReservationDTO reservationDTO, Integer id);
 }
