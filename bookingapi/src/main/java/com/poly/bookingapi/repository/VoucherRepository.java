@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
+    Voucher getById(Integer id);
 }
