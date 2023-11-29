@@ -18,7 +18,7 @@ public class VoucherDTO {
 
     private Integer status;
 
-    private BigDecimal requirement;
+    private Long requirement;
 
     private LocalDate startDate;
 

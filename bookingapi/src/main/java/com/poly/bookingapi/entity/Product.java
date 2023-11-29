@@ -35,7 +35,7 @@ public class Product {
     private String nameProduct;
 
     @Column(name = "price")
-    private BigDecimal price;
+    private Long price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_id", referencedColumnName = "id")

@@ -35,7 +35,7 @@ public class CategoryDiningRoom {
     private LocalDate createdAt;
 
     @Column(name = "fee")
-    private BigDecimal fee;
+    private Long fee;
 
     @Column(name = "update_at")
     @DateTimeFormat(pattern = "dd/MM/yyyy")

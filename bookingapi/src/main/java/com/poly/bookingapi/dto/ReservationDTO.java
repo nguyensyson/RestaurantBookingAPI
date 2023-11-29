@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ReservationDTO {
 
+    private Integer id;
     private String sdt;
     private Integer numberOfPeopleBooked;
     private LocalDate reservationDate;
@@ -24,18 +25,13 @@ public class ReservationDTO {
     private Integer idClient;
     private Integer idAdmin;
     private Integer idVoucher;
-//    private ReservationStatus reservationStatus;
-//    private Client client;
-//    private Admin admin;
-//    private CategoryDiningRoom categoryDiningRoom;
-//    private Voucher voucher;
     private LocalTime startTime;
     private LocalTime endTime;
     private LocalTime delayTime;
-    private BigDecimal upfrontPrice;
+    private Long upfrontPrice;
     private LocalDate createdAt;
-    private List<ReservationPorductDTO> listProduct;
-//    private List<CategoryDiningRoomDTO> categoryDiningRoomDTOList;
+    private List<ProductDTO> listProduct;
+    private List<ReservationPorductDTO> listReservationPorduct;
 
 }
 

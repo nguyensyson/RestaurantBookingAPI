@@ -38,7 +38,10 @@ public class ReservationProduct {
     private String nameProduct;
 
     @Column(name = "price")
-    private BigDecimal price;
+    private Long price;
+
+    @Column(name = "sub_total")
+    private Long subToTal;
 
     @Column(name = "quantity")
     private Integer quantity;
