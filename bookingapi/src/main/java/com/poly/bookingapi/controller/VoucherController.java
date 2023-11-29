@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(" ")
+@RequestMapping("api/voucher")
 public class VoucherController {
 
     @Autowired
@@ -18,17 +18,17 @@ public class VoucherController {
         return ResponseEntity.ok(voucherService.getALl());
     }
 
-    @PostMapping("/addVoucher")
+    @PostMapping("/add")
     public ResponseEntity<?>addVoucher(@RequestBody VoucherDTO voucherDTO){
         return ResponseEntity.ok(voucherService.add(voucherDTO));
     }
 
-    @PutMapping("/updateVoucher/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?>updateVoucher(@RequestBody VoucherDTO voucherDTO,@PathVariable Integer id){
         return ResponseEntity.ok(voucherService.update(voucherDTO, id));
     }
 
-    @DeleteMapping("/deleteVoucher/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?>deleteVoucher(@PathVariable Integer id){
         return ResponseEntity.ok(voucherService.delete(id));
     }

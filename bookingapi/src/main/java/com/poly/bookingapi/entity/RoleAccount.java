@@ -1,17 +1,20 @@
 package com.poly.bookingapi.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.transaction.Transactional;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Setter
+@Getter
 @Entity
 @Table(name = "role_account")
 public class RoleAccount {
@@ -34,4 +37,10 @@ public class RoleAccount {
 
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     private List<Account> listAccount;
+
+    public List<SimpleGrantedAuthority> getAuthorities() {
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + nameRole));
+        return authorities;
+    }
 }

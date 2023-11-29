@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/reservation/api")
+@RequestMapping("/api/admin/reservation")
 public class ReservarionController {
 
     @Autowired
     private ReservationService reservationService;
 
-    @GetMapping("/getReservation")
+    @GetMapping("/get")
     public ResponseEntity<?>getAll(){
         return ResponseEntity.ok(reservationService.getAll());
     }
