@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Setter
@@ -13,8 +14,10 @@ import java.util.List;
 @AllArgsConstructor
 public class DiningRoomDTO {
 
-    private Integer idDinnerTable;
+    private Integer idCategoryDining;
     private Integer maximumOccupancy;
+    private LocalDate createAt;
+    private LocalDate updateAt;
     private List<DinnerTableDTO> listDinnerTable;
 
 
