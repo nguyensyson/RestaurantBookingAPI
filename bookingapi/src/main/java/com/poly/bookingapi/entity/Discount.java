@@ -24,7 +24,7 @@ public class Discount {
     private String nameDiscount;
 
     @Column(name = "discount_value")
-    private Double discountValue;
+    private Integer discountValue;
 
     @Column(name = "status")
     private Integer status;

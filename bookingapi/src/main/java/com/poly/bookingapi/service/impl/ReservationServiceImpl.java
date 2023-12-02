@@ -104,18 +104,11 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setDelayTime(reservationDTO.getDelayTime());
         reservation.setEndTime(reservationDTO.getEndTime());
         reservation.setUpfrontPrice(reservationDTO.getUpfrontPrice());
-        reservation.setCreatedAt(reservationDTO.getCreatedAt());
         long totalPrice = 0;
         if (reservationDTO.getListProduct() != null) {
             for (ProductDTO list : reservationDTO.getListProduct()) {
                 ReservationProduct reservationProduct = new ReservationProduct();
                 reservationProduct.setReservation(reservationRepository.save(reservation));
-                reservationProduct.setProduct(Product.builder().id(list.getId()).build());
-                reservationProduct.setNameProduct(list.getNameProduct());
-                reservationProduct.setPrice(list.getPrice());
-                reservationProduct.setQuantity(list.getQuantity());
-                reservationProduct.setSubToTal(list.getPrice() * list.getQuantity());
-                totalPrice +=reservationProduct.getSubToTal();
                 reservationProductRepository.save(reservationProduct);
             }
         }
@@ -159,12 +152,6 @@ public class ReservationServiceImpl implements ReservationService {
             for (ProductDTO list : reservationDTO.getListProduct()) {
                 ReservationProduct reservationProduct = new ReservationProduct();
                 reservationProduct.setReservation(reservationRepository.save(reservation));
-                reservationProduct.setProduct(Product.builder().id(list.getId()).build());
-                reservationProduct.setNameProduct(list.getNameProduct());
-                reservationProduct.setPrice(list.getPrice());
-                reservationProduct.setQuantity(list.getQuantity());
-                reservationProduct.setSubToTal(list.getPrice() * list.getQuantity());
-                totalPrice += reservationProduct.getSubToTal();
                 reservationProductRepository.save(reservationProduct);
             }
         }

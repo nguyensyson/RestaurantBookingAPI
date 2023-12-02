@@ -8,8 +8,5 @@ import java.util.List;
 
 @Service
 public class DinnerTableServiceImpl implements DinnerTableService {
-    @Override
-    public List<DinnerTableDTO> getList() {
-        return null;
-    }
+
 }

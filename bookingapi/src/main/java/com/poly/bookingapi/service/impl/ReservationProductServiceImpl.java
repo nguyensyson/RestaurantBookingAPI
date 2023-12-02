@@ -24,7 +24,6 @@ public class ReservationProductServiceImpl implements ReservationProductService 
     public ReservationProduct addReservationProduct(ReservationPorductDTO reservationPorductDTO) {
         ReservationProduct reservationProduct = new ReservationProduct();
         reservationProduct.setProduct(Product.builder().id(reservationPorductDTO.getProduct().getId()).build());
-//        reservationProduct.setReservation(Reservation.builder().id(reservationPorductDTO.getReservation().getId()).build());
         reservationProduct.setQuantity(reservationPorductDTO.getQuantity());
         return reservationProductRepository.save(reservationProduct);
     }

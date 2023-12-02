@@ -13,7 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 public class DiningRoomDTO {
 
-    private Integer idDinnerTable;
     private Integer maximumOccupancy;
     private List<DinnerTableDTO> listDinnerTable;
 
