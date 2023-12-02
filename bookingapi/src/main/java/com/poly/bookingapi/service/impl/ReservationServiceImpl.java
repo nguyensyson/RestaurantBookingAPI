@@ -204,6 +204,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setEndTime(reservationDTO.getEndTime());
         reservation.setUpfrontPrice(reservationDTO.getUpfrontPrice());
         reservation.setCreatedAt(LocalDate.now());
+      
         long totalPrice = 0;
         if (reservationDTO.getListProduct() != null) {
             for (ProductDTO list : reservationDTO.getListProduct()) {
@@ -225,6 +226,7 @@ public class ReservationServiceImpl implements ReservationService {
                     reservationProduct.setSubToTal(product.getPrice() * list.getQuantity());
                     totalPrice += reservationProduct.getSubToTal();
                 }
+
                 reservationProductRepository.save(reservationProduct);
             }
         }

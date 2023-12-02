@@ -1,9 +1,7 @@
 package com.poly.bookingapi.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -11,7 +9,8 @@ import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "combo_detail")
 public class ComboDetail {
@@ -33,7 +32,7 @@ public class ComboDetail {
     private String nameProduct;
 
     @Column(name = "price")
-    private BigDecimal price;
+    private Long price;
 
     @Column(name = "created_at")
     @DateTimeFormat(pattern = "dd/MM/yyyy")

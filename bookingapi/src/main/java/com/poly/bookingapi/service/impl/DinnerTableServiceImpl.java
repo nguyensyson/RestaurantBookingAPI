@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @Service
 public class DinnerTableServiceImpl implements DinnerTableService {
+
     @Autowired
     private DinnerTableRepository dinnerTableRepository;
 

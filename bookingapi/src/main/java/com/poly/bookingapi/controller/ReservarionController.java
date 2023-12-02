@@ -15,13 +15,13 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/reservation/api")
+@RequestMapping("/api/admin/reservation")
 public class ReservarionController {
 
     @Autowired
     private ReservationService reservationService;
 
-    @GetMapping("/getReservation")
+    @GetMapping("/get")
     public ResponseEntity<?>getAll(){
         return ResponseEntity.ok(reservationService.getAll());
     }
@@ -71,3 +71,5 @@ public class ReservarionController {
         return ResponseEntity.ok(new MessageResponse("update reservation success"));
     }
 }
+
+

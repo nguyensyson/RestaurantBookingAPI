@@ -8,7 +8,8 @@ import com.poly.bookingapi.entity.Reservation;
 import java.util.List;
 import java.util.Optional;
 
-public interface ReservationService {
+public interface
+ReservationService {
     List<ReservationDTO> getAll();
     void addByUser(ReservationDTO reservationDTO);
     void addByAdmin(ReservationDTO reservationDTO);
