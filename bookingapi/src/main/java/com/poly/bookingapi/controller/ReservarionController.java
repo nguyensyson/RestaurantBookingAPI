@@ -25,13 +25,13 @@ public class ReservarionController {
     @PostMapping("/addByUser")
     public ResponseEntity<?>addByUser(@RequestBody ReservationDTO reservationDTO){
         reservationService.addByUser(reservationDTO);
-        return  ResponseEntity.ok(new MessageResponse("yes!!"));
+        return  ResponseEntity.ok(new MessageResponse("add reservation by user success"));
     }
 
     @PostMapping("/addByAdmin")
     public ResponseEntity<?>addByAdmin(@RequestBody ReservationDTO reservationDTO){
         reservationService.addByAdmin(reservationDTO);
-        return  ResponseEntity.ok(new MessageResponse("yes!!"));
+        return  ResponseEntity.ok(new MessageResponse("add reservation by admin success"));
     }
 
     @PutMapping("/checkin/{id}")
@@ -42,7 +42,7 @@ public class ReservarionController {
         reservationService.addDiningRoom(categoryDiningRoom,categoryDiningRoom.getId());
         reservationService.addDinnerTable(diningRoom,diningRoom.getId());
         reservationService.checkIn(reservationDTO, id);
-        return ResponseEntity.ok(new MessageResponse("yes!!"));
+        return ResponseEntity.ok(new MessageResponse("update reservation success"));
     }
 
     @GetMapping("/getCountReservation")
