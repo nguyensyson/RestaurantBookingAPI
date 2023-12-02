@@ -1,5 +1,6 @@
 package com.poly.bookingapi.entity;
 
+import com.poly.bookingapi.dto.DinnerTableDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -39,4 +40,12 @@ public class DinnerTable {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate updateAt;
 
+
+    public DinnerTableDTO loadData (DinnerTableDTO dinnerTableDTO){
+        dinnerTableDTO.setNumberOfSeats(numberOfSeats);
+        dinnerTableDTO.setStatus(status);
+        dinnerTableDTO.setCreateAt(createdAt);
+        dinnerTableDTO.setUpdateAt(updateAt);
+        return dinnerTableDTO;
+    }
 }

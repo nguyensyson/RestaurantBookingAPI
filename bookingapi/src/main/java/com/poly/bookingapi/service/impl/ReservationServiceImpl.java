@@ -10,6 +10,7 @@ import com.poly.bookingapi.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -56,38 +57,136 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public void addByUser(ReservationDTO reservationDTO) {
 
-        //Lay ra nguoi dung
-        Client client = clientRepository.getClientById(reservationDTO.getIdClient());
         //luu vao reservation
-        Reservation reservation = new Reservation();
-        reservation.setClient(client);
-        reservation.setFullNameClient(client.getFullname());
-        reservation.setSdt(reservationDTO.getSdt());
-        reservation.setNumberOfPeopleBooked(reservationDTO.getNumberOfPeopleBooked());
-        reservation.setReservationDate(reservationDTO.getReservationDate());
-        reservation.setCategoryDiningRoom(CategoryDiningRoom.builder().id(reservationDTO.getIdCategoryDiningRoom()).build());
-        reservation.setStatus(ReservationStatus.builder().id(1).build());
-        reservation.setStartTime(reservationDTO.getStartTime());
-        reservation.setDelayTime(reservationDTO.getDelayTime());
-        reservation.setEndTime(reservationDTO.getEndTime());
-        reservation.setUpfrontPrice(reservationDTO.getUpfrontPrice());
-        reservation.setCreatedAt(reservationDTO.getCreatedAt());
-        long totalPrice = 0;
-        if (reservationDTO.getListProduct() != null) {
-            for (ProductDTO list : reservationDTO.getListProduct()) {
-                ReservationProduct reservationProduct = new ReservationProduct();
-                reservationProduct.setReservation(reservationRepository.save(reservation));
-                reservationProduct.setProduct(Product.builder().id(list.getId()).build());
-                reservationProduct.setNameProduct(list.getNameProduct());
-                reservationProduct.setPrice(list.getPrice());
-                reservationProduct.setQuantity(list.getQuantity());
-                reservationProduct.setSubToTal(list.getPrice() * list.getQuantity());
-                totalPrice +=reservationProduct.getSubToTal();
-                reservationProductRepository.save(reservationProduct);
+        if(reservationDTO.getIdVoucher() != null && reservationDTO.getIdClient() !=null){
+            //lay vocher
+            Voucher voucher = voucherRepository.getById(reservationDTO.getIdVoucher());
+            //lay client
+            Client client = clientRepository.getClientById(reservationDTO.getIdClient());
+            Reservation reservation = new Reservation();
+            reservation.setClient(client);
+            reservation.setFullNameClient(client.getFullname());
+            reservation.setSdt(reservationDTO.getSdt());
+            reservation.setNumberOfPeopleBooked(reservationDTO.getNumberOfPeopleBooked());
+            reservation.setReservationDate(reservationDTO.getReservationDate());
+            reservation.setCategoryDiningRoom(CategoryDiningRoom.builder().id(reservationDTO.getIdCategoryDiningRoom()).build());
+            reservation.setStatus(ReservationStatus.builder().id(1).build());
+            reservation.setStartTime(reservationDTO.getStartTime());
+            reservation.setDelayTime(reservationDTO.getDelayTime());
+            reservation.setEndTime(reservationDTO.getEndTime());
+            reservation.setUpfrontPrice(reservationDTO.getUpfrontPrice());
+            reservation.setCreatedAt(LocalDate.now());
+            long totalPrice = 0;
+            if (reservationDTO.getListProduct() != null) {
+                for (ProductDTO list : reservationDTO.getListProduct()) {
+                    ReservationProduct reservationProduct = new ReservationProduct();
+                    reservationProduct.setReservation(reservationRepository.save(reservation));
+                    Product product = productRepository.getById(list.getId());
+                    if (product.getNewPrice() != null) {
+                        reservationProduct.setProduct(product);
+                        reservationProduct.setNameProduct(product.getNameProduct());
+                        reservationProduct.setPrice(product.getNewPrice());
+                        reservationProduct.setQuantity(list.getQuantity());
+                        reservationProduct.setSubToTal(product.getNewPrice() * list.getQuantity());
+                        totalPrice += reservationProduct.getSubToTal();
+                    } else {
+                        reservationProduct.setProduct(product);
+                        reservationProduct.setNameProduct(product.getNameProduct());
+                        reservationProduct.setPrice(product.getPrice());
+                        reservationProduct.setQuantity(list.getQuantity());
+                        reservationProduct.setSubToTal(product.getPrice() * list.getQuantity());
+                        totalPrice += reservationProduct.getSubToTal();
+                    }
+                    reservationProductRepository.save(reservationProduct);
+                }
             }
+            reservation.setVoucher(voucher);
+            reservation.setOriginalPrice(totalPrice - ((totalPrice * reservation.getVoucher().getVoucherValue()) / 100));
+            reservationRepository.save(reservation);
+        } else if(reservationDTO.getIdVoucher() == null && reservationDTO.getIdClient() != null){
+            Reservation reservation = new Reservation();
+            Client client = clientRepository.getClientById(reservationDTO.getIdClient());
+            reservation.setClient(client);
+            reservation.setFullNameClient(client.getFullname());
+            reservation.setSdt(reservationDTO.getSdt());
+            reservation.setNumberOfPeopleBooked(reservationDTO.getNumberOfPeopleBooked());
+            reservation.setReservationDate(reservationDTO.getReservationDate());
+            reservation.setCategoryDiningRoom(CategoryDiningRoom.builder().id(reservationDTO.getIdCategoryDiningRoom()).build());
+            reservation.setStatus(ReservationStatus.builder().id(1).build());
+            reservation.setStartTime(reservationDTO.getStartTime());
+            reservation.setDelayTime(reservationDTO.getDelayTime());
+            reservation.setEndTime(reservationDTO.getEndTime());
+            reservation.setUpfrontPrice(reservationDTO.getUpfrontPrice());
+            reservation.setCreatedAt(LocalDate.now());
+            long totalPrice = 0;
+            if (reservationDTO.getListProduct() != null) {
+                for (ProductDTO list : reservationDTO.getListProduct()) {
+                    ReservationProduct reservationProduct = new ReservationProduct();
+                    reservationProduct.setReservation(reservationRepository.save(reservation));
+                    Product product = productRepository.getById(list.getId());
+                    if (product.getNewPrice() != null) {
+                        reservationProduct.setProduct(product);
+                        reservationProduct.setNameProduct(product.getNameProduct());
+                        reservationProduct.setPrice(product.getNewPrice());
+                        reservationProduct.setQuantity(list.getQuantity());
+                        reservationProduct.setSubToTal(product.getNewPrice() * list.getQuantity());
+                        totalPrice += reservationProduct.getSubToTal();
+                    } else {
+                        reservationProduct.setProduct(product);
+                        reservationProduct.setNameProduct(product.getNameProduct());
+                        reservationProduct.setPrice(product.getPrice());
+                        reservationProduct.setQuantity(list.getQuantity());
+                        reservationProduct.setSubToTal(product.getPrice() * list.getQuantity());
+                        totalPrice += reservationProduct.getSubToTal();
+                    }
+                    reservationProductRepository.save(reservationProduct);
+                }
+            }
+            reservation.setVoucher(null);
+            reservation.setOriginalPrice(totalPrice);
+            reservationRepository.save(reservation);
+        }else{
+            Reservation reservation = new Reservation();
+            reservation.setClient(null);
+            reservation.setFullNameClient(null);
+            reservation.setSdt(reservationDTO.getSdt());
+            reservation.setNumberOfPeopleBooked(reservationDTO.getNumberOfPeopleBooked());
+            reservation.setReservationDate(reservationDTO.getReservationDate());
+            reservation.setCategoryDiningRoom(CategoryDiningRoom.builder().id(reservationDTO.getIdCategoryDiningRoom()).build());
+            reservation.setStatus(ReservationStatus.builder().id(1).build());
+            reservation.setStartTime(reservationDTO.getStartTime());
+            reservation.setDelayTime(reservationDTO.getDelayTime());
+            reservation.setEndTime(reservationDTO.getEndTime());
+            reservation.setUpfrontPrice(reservationDTO.getUpfrontPrice());
+            reservation.setCreatedAt(LocalDate.now());
+            long totalPrice = 0;
+            if (reservationDTO.getListProduct() != null) {
+                for (ProductDTO list : reservationDTO.getListProduct()) {
+                    ReservationProduct reservationProduct = new ReservationProduct();
+                    reservationProduct.setReservation(reservationRepository.save(reservation));
+                    Product product = productRepository.getById(list.getId());
+                    if (product.getNewPrice() != null) {
+                        reservationProduct.setProduct(product);
+                        reservationProduct.setNameProduct(product.getNameProduct());
+                        reservationProduct.setPrice(product.getNewPrice());
+                        reservationProduct.setQuantity(list.getQuantity());
+                        reservationProduct.setSubToTal(product.getNewPrice() * list.getQuantity());
+                        totalPrice += reservationProduct.getSubToTal();
+                    } else {
+                        reservationProduct.setProduct(product);
+                        reservationProduct.setNameProduct(product.getNameProduct());
+                        reservationProduct.setPrice(product.getPrice());
+                        reservationProduct.setQuantity(list.getQuantity());
+                        reservationProduct.setSubToTal(product.getPrice() * list.getQuantity());
+                        totalPrice += reservationProduct.getSubToTal();
+                    }
+                    reservationProductRepository.save(reservationProduct);
+                }
+            }
+            reservation.setVoucher(null);
+            reservation.setOriginalPrice(totalPrice);
+            reservationRepository.save(reservation);
         }
-        reservation.setOriginalPrice(totalPrice);
-        reservationRepository.save(reservation);
     }
 
     @Override
@@ -104,11 +203,30 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setDelayTime(reservationDTO.getDelayTime());
         reservation.setEndTime(reservationDTO.getEndTime());
         reservation.setUpfrontPrice(reservationDTO.getUpfrontPrice());
+        reservation.setCreatedAt(LocalDate.now());
+      
         long totalPrice = 0;
         if (reservationDTO.getListProduct() != null) {
             for (ProductDTO list : reservationDTO.getListProduct()) {
                 ReservationProduct reservationProduct = new ReservationProduct();
                 reservationProduct.setReservation(reservationRepository.save(reservation));
+                Product product = productRepository.getById(list.getId());
+                if (product.getNewPrice() != null) {
+                    reservationProduct.setProduct(product);
+                    reservationProduct.setNameProduct(product.getNameProduct());
+                    reservationProduct.setPrice(product.getNewPrice());
+                    reservationProduct.setQuantity(list.getQuantity());
+                    reservationProduct.setSubToTal(product.getNewPrice() * list.getQuantity());
+                    totalPrice += reservationProduct.getSubToTal();
+                } else {
+                    reservationProduct.setProduct(product);
+                    reservationProduct.setNameProduct(product.getNameProduct());
+                    reservationProduct.setPrice(product.getPrice());
+                    reservationProduct.setQuantity(list.getQuantity());
+                    reservationProduct.setSubToTal(product.getPrice() * list.getQuantity());
+                    totalPrice += reservationProduct.getSubToTal();
+                }
+
                 reservationProductRepository.save(reservationProduct);
             }
         }
@@ -152,10 +270,80 @@ public class ReservationServiceImpl implements ReservationService {
             for (ProductDTO list : reservationDTO.getListProduct()) {
                 ReservationProduct reservationProduct = new ReservationProduct();
                 reservationProduct.setReservation(reservationRepository.save(reservation));
+                Product product = productRepository.getById(list.getId());
+                if (product.getNewPrice() != null) {
+                    reservationProduct.setProduct(product);
+                    reservationProduct.setNameProduct(product.getNameProduct());
+                    reservationProduct.setPrice(product.getNewPrice());
+                    reservationProduct.setQuantity(list.getQuantity());
+                    reservationProduct.setSubToTal(product.getNewPrice() * list.getQuantity());
+                    totalPrice += reservationProduct.getSubToTal();
+                } else {
+                    reservationProduct.setProduct(product);
+                    reservationProduct.setNameProduct(product.getNameProduct());
+                    reservationProduct.setPrice(product.getPrice());
+                    reservationProduct.setQuantity(list.getQuantity());
+                    reservationProduct.setSubToTal(product.getPrice() * list.getQuantity());
+                    totalPrice += reservationProduct.getSubToTal();
+                }
                 reservationProductRepository.save(reservationProduct);
             }
         }
         reservation.setOriginalPrice(totalPrice);
         reservationRepository.save(reservation);
     }
+
+    @Override
+    public Optional<Reservation> detailReservation(Integer id) {
+        Optional<Reservation> optionalReservation = reservationRepository.findById(id);
+        return optionalReservation;
+    }
+
+    @Override
+    public void updateByClient(ReservationDTO reservationDTO, Integer id) {
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found Reservation"));
+        reservation.setStatus(ReservationStatus.builder().id(reservationDTO.getIdStatus()).build());
+        reservation.setFullNameClient(reservation.getFullNameClient());
+        reservation.setSdt(reservationDTO.getSdt());
+        reservation.setNumberOfPeopleBooked(reservationDTO.getNumberOfPeopleBooked());
+        reservation.setStartTime(reservationDTO.getStartTime());
+        reservation.setDelayTime(reservationDTO.getDelayTime());
+        reservation.setEndTime(reservationDTO.getEndTime());
+        reservation.setCategoryDiningRoom(CategoryDiningRoom.builder().id(reservationDTO.getIdCategoryDiningRoom()).build());
+        reservation.setCreatedAt(LocalDate.now());
+        long totalPrice = 0;
+        if (reservationDTO.getListProduct() != null) {
+            for (ProductDTO list : reservationDTO.getListProduct()) {
+                ReservationProduct reservationProduct = new ReservationProduct();
+                reservationProduct.setReservation(reservationRepository.save(reservation));
+                Product product = productRepository.getById(list.getId());
+                if (product.getNewPrice() != null) {
+                    reservationProduct.setProduct(product);
+                    reservationProduct.setNameProduct(product.getNameProduct());
+                    reservationProduct.setPrice(product.getNewPrice());
+                    reservationProduct.setQuantity(list.getQuantity());
+                    reservationProduct.setSubToTal(product.getNewPrice() * list.getQuantity());
+                    totalPrice += reservationProduct.getSubToTal();
+                } else {
+                    reservationProduct.setProduct(product);
+                    reservationProduct.setNameProduct(product.getNameProduct());
+                    reservationProduct.setPrice(product.getPrice());
+                    reservationProduct.setQuantity(list.getQuantity());
+                    reservationProduct.setSubToTal(product.getPrice() * list.getQuantity());
+                    totalPrice += reservationProduct.getSubToTal();
+                }
+                reservationProductRepository.save(reservationProduct);
+            }
+        }
+        reservation.setOriginalPrice(totalPrice);
+        reservationRepository.save(reservation);
+    }
+
+    @Override
+    public List<Reservation> getReservationByUser(Integer id) {
+        List<Reservation> reservations = reservationRepository.getReservationByUser(id);
+        return reservations;
+    }
+
+
 }

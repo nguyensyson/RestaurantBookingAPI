@@ -1,23 +1,25 @@
 package com.poly.bookingapi.dto;
 
-import com.poly.bookingapi.entity.DiningRoom;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class DinnerTableDTO {
+@NoArgsConstructor
 
-    private Integer id;
-    private DiningRoom diningRoom;
-    private Integer numberOfSeats;
+public class DiscountDTO {
+
+    private String nameDiscount;
+    private Integer discountValue;
     private Integer status;
+    private String introduce;
     private LocalDate createAt;
-    private LocalDate updateAt;
+    private List<ProductDTO> getListProduct;
+    
 }

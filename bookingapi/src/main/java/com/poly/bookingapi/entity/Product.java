@@ -35,6 +35,9 @@ public class Product {
     @Column(name = "price")
     private Long price;
 
+    @Column(name = "new_price")
+    private Long newPrice;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_id", referencedColumnName = "id")
     private Discount discount;

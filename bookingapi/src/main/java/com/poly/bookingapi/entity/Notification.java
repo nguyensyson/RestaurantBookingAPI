@@ -1,5 +1,6 @@
 package com.poly.bookingapi.entity;
 
+import com.poly.bookingapi.dto.NotificationDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -39,4 +40,11 @@ public class Notification {
 
     @OneToMany(mappedBy = "notification", fetch = FetchType.LAZY)
     private List<Voucher> listVoucher;
+
+    public NotificationDTO loadData (NotificationDTO notificationDTO){
+        notificationDTO.setContent(content);
+        notificationDTO.setTitle(title);
+        notificationDTO.setCreatedAt(createdAt);
+        return notificationDTO;
+    }
 }
