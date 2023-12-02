@@ -15,9 +15,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ComboAdđTO {
+public class ComboAddDTO {
 
-    private CategoryProduct category;
     private MultipartFile avatar;
 //    private List<ImageProduct> images;
     private String name;

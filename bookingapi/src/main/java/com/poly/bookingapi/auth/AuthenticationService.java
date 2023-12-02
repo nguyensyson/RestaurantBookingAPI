@@ -3,14 +3,8 @@ package com.poly.bookingapi.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poly.bookingapi.config.JwtService;
 import com.poly.bookingapi.dto.TokenType;
-import com.poly.bookingapi.entity.Account;
-import com.poly.bookingapi.entity.Client;
-import com.poly.bookingapi.entity.RoleAccount;
-import com.poly.bookingapi.entity.Token;
-import com.poly.bookingapi.repository.AccountRepository;
-import com.poly.bookingapi.repository.ClientRepository;
-import com.poly.bookingapi.repository.RoleAccountRepository;
-import com.poly.bookingapi.repository.TokenRepository;
+import com.poly.bookingapi.entity.*;
+import com.poly.bookingapi.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +23,8 @@ public class AuthenticationService {
 
     @Autowired
     private ClientRepository clientRepository;
-
+    @Autowired
+    private AdminRepository adminRepository;
     @Autowired
     private RoleAccountRepository roleAccountRepository;
 
@@ -104,7 +99,7 @@ public class AuthenticationService {
         tokenRepository.save(token);
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public <T> AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -119,13 +114,49 @@ public class AuthenticationService {
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
-        return new AuthenticationResponse.Builder()
-                .setAccessToken(jwtToken)
-                .setRefreshToken(refreshToken)
-                .setId(user.getId())
-                .setRoleId(user.getRole().getId())
-                .setUsername(user.getUsername())
-                .build();
+
+        if(user.getRole().getId() == 3) {
+
+            return new AuthenticationResponse.Builder()
+                    .setAccessToken(jwtToken)
+                    .setRefreshToken(refreshToken)
+                    .setRoleId(user.getRole().getId())
+                    .setUserId(clientRepository.getByAccount(user.getId()).getId())
+                    .build();
+        } else {
+            return new AuthenticationResponse.Builder()
+                    .setAccessToken(jwtToken)
+                    .setRefreshToken(refreshToken)
+                    .setRoleId(user.getRole().getId())
+                    .setUserId(adminRepository.getByAccount(user.getId()).getId())
+                    .build();
+        }
+
+//        Object userData;
+//        if (user.getRole().getId() == 3) {
+//            userData = clientRepository.getByAccount(user.getId());
+//        } else {
+//            userData = adminRepository.getByAccount(user.getId());
+//        }
+//
+//// Kiểm tra kiểu dữ liệu và ép kiểu an toàn
+//        if ((userData instanceof Client) && (responseType.isAssignableFrom(Client.class))) {
+//            return new AuthenticationResponse.Builder<T>()
+//                    .setAccessToken(jwtToken)
+//                    .setRefreshToken(refreshToken)
+//                    .setRoleId(user.getRole().getId())
+//                    .setUser((T) userData)
+//                    .build();
+//        } else if ((userData instanceof Admin) && (responseType.isAssignableFrom(Admin.class))) {
+//            return new AuthenticationResponse.Builder<T>()
+//                    .setAccessToken(jwtToken)
+//                    .setRefreshToken(refreshToken)
+//                    .setRoleId(user.getRole().getId())
+//                    .setUser((T) userData)
+//                    .build();
+//        } else {
+//            return null;
+//        }
     }
 
     private void revokeAllUserTokens(Account user) {
@@ -162,6 +193,9 @@ public class AuthenticationService {
                         .setAccessToken(accessToken)
                         .setRefreshToken(refreshToken)
                         .build();
+//                AuthenticationResponse authResponse = new AuthenticationResponse();
+//                authResponse.setRefreshToken(refreshToken);
+//                authResponse.setAccessToken(accessToken);
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }
