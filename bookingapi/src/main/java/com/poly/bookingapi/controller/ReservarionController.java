@@ -15,45 +15,44 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/admin/reservation")
 public class ReservarionController {
 
     @Autowired
     private ReservationService reservationService;
 
-    @GetMapping("/get")
+    @GetMapping("/api/view/reservation/get-all")
     public ResponseEntity<?>getAll(){
         return ResponseEntity.ok(reservationService.getAll());
     }
 
-    @GetMapping("/getCountReservation")
+    @GetMapping("/api/view/reservation/getCountReservation")
     public ResponseEntity<?>getCountReservaion(){
         return ResponseEntity.ok(reservationService.countReservation());
     }
 
-    @GetMapping("/getAllByClient")
+    @GetMapping("/api/view/reservation/getAllByClient")
     public ResponseEntity<List<Reservation>>getAllByClient(@RequestParam(value = "id") Integer id){
         return ResponseEntity.ok(reservationService.getReservationByUser(id));
     }
 
-    @GetMapping("/detailReservation/{id}")
+    @GetMapping("/api/view/reservation/detail/{id}")
     public ResponseEntity<?> detailReservation(@PathVariable("id") Integer id){
         return ResponseEntity.ok(reservationService.detailReservation(id).orElseThrow(() -> new NotFoundException("Not Found Reservation")));
     }
 
-    @PostMapping("/addByUser")
+    @PostMapping("/api/admin/reservation/addByUser")
     public ResponseEntity<?>addByUser(@RequestBody ReservationDTO reservationDTO){
         reservationService.addByUser(reservationDTO);
         return  ResponseEntity.ok(new MessageResponse("add reservation by user success"));
     }
 
-    @PostMapping("/addByAdmin")
+    @PostMapping("/api/admin/reservation/addByAdmin")
     public ResponseEntity<?>addByAdmin(@RequestBody ReservationDTO reservationDTO){
         reservationService.addByAdmin(reservationDTO);
         return  ResponseEntity.ok(new MessageResponse("add reservation by admin success"));
     }
 
-    @PutMapping("/checkin/{id}")
+    @PutMapping("/api/admin/reservation/checkin/{id}")
     public  ResponseEntity<?>checkIn(@RequestBody ReservationDTO reservationDTO,
                                      @PathVariable Integer id,
                                      @RequestBody CategoryDiningRoom categoryDiningRoom,
@@ -64,7 +63,7 @@ public class ReservarionController {
         return ResponseEntity.ok(new MessageResponse("update reservation success"));
     }
 
-    @PutMapping("/updateByUser/{id}")
+    @PutMapping("/api/admin/reservation/updateByUser/{id}")
     public  ResponseEntity<?>updateByUser(@RequestBody ReservationDTO reservationDTO,
                                           @PathVariable Integer id){
         reservationService.updateByClient(reservationDTO, id);

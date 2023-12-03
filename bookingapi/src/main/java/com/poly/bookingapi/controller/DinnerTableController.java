@@ -7,28 +7,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
 public class DinnerTableController {
 
     @Autowired
     private DinnerTableService dinnerTableService;
 
-    @GetMapping("/getAllDinnerTable")
+    @GetMapping("api/view/dinner-table/get-all")
     public ResponseEntity<?> getAllDinnerTable(){
         return ResponseEntity.ok(dinnerTableService.getAll());
     }
 
-    @PostMapping("/addDinnerTable")
+    @PostMapping("api/admin/dinner-table/add")
     public ResponseEntity<?>addDinnerTable(@RequestBody DinnerTableDTO dinnerTableDTO){
         return ResponseEntity.ok(dinnerTableService.add(dinnerTableDTO));
     }
 
-    @PutMapping("/updateDinnerTable/{id}")
+    @PutMapping("api/admin/dinner-table/update/{id}")
     public ResponseEntity<?>updateDinnerTable(@RequestBody DinnerTableDTO dinnerTableDTO, @PathVariable Integer id){
         return ResponseEntity.ok(dinnerTableService.update(dinnerTableDTO, id));
     }
 
-    @DeleteMapping("/deleteDinnerTable/{id}")
+    @DeleteMapping("api/admin/dinner-table/delete/{id}")
     public ResponseEntity<?>deleteDinnerTable(@PathVariable Integer id){
         return ResponseEntity.ok(dinnerTableService.delete(id));
     }
