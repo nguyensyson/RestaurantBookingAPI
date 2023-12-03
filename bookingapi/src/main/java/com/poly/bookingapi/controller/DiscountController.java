@@ -8,30 +8,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
 public class DiscountController {
 
     @Autowired
     private DiscountService discountService;
 
-    @PostMapping("/add")
+    @PostMapping("api/admin/discount/add")
     public ResponseEntity<?>add(@RequestBody DiscountDTO discountDTO){
         return ResponseEntity.ok(discountService.add(discountDTO));
     }
 
 
-    @PutMapping("/update/{id}")
+    @PutMapping("api/admin/discount/update/{id}")
     public ResponseEntity<?> update(@RequestBody DiscountDTO discountDTO,@PathVariable Integer id){
         return ResponseEntity.ok(discountService.update(discountDTO, id));
     }
 
-    @PutMapping("/enable/{id}")
+    @PutMapping("api/admin/discount/enable/{id}")
     public ResponseEntity<?> enabled(@PathVariable Integer id){
         return ResponseEntity.ok(discountService.enable(id));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?>delete(@PathVariable Integer id){
-        return ResponseEntity.ok(discountService.delete(id));
-    }
 }

@@ -7,27 +7,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
 public class NotificationController {
     @Autowired
     private NotificationService notificationService;
 
-    @GetMapping("/getAll")
+    @GetMapping("api/view/notification/getAll")
     public ResponseEntity<?> getAll(){
         return ResponseEntity.ok(notificationService.getAll());
     }
 
-    @PostMapping("/addNotification")
+    @PostMapping("api/admin/notification/add")
     public ResponseEntity<?>addNotification(@RequestBody NotificationDTO notificationDTO){
         return ResponseEntity.ok(notificationService.add(notificationDTO));
     }
 
-    @PutMapping("/updateNotification/{id}")
+    @PutMapping("api/admin/notification/update/{id}")
     public ResponseEntity<?>updateNotification(@RequestBody NotificationDTO notificationDTO,@PathVariable Integer id){
         return ResponseEntity.ok(notificationService.update(notificationDTO, id));
     }
 
-    @DeleteMapping("/deleteNotification/{id}")
+    @DeleteMapping("api/admin/notification/delete/{id}")
     public ResponseEntity<?>deleteNotification(@PathVariable Integer id){
         return ResponseEntity.ok(notificationService.delete(id));
     }

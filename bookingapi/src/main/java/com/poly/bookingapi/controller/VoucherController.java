@@ -7,29 +7,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/voucher")
 public class VoucherController {
 
     @Autowired
     private VoucherService voucherService;
 
-    @GetMapping("/getAll")
+    @GetMapping("api/view/voucher/get-all")
     public ResponseEntity<?>getAll(){
         return ResponseEntity.ok(voucherService.getALl());
     }
 
-    @PostMapping("/add")
+    @PostMapping("api/admin/voucher/add")
     public ResponseEntity<?>addVoucher(@RequestBody VoucherDTO voucherDTO){
         return ResponseEntity.ok(voucherService.add(voucherDTO));
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("api/admin/voucher/update/{id}")
     public ResponseEntity<?>updateVoucher(@RequestBody VoucherDTO voucherDTO,@PathVariable Integer id){
         return ResponseEntity.ok(voucherService.update(voucherDTO, id));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?>deleteVoucher(@PathVariable Integer id){
-        return ResponseEntity.ok(voucherService.delete(id));
-    }
 }
