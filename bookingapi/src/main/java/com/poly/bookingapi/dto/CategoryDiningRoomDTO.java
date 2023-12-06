@@ -18,6 +18,6 @@ public class CategoryDiningRoomDTO {
     private String title;
     private String introduce;
     private BigDecimal fee;
-    private List<ReservationDTO> listReservation;
+    private List<ReservationViewDTO> listReservation;
     private List<DiningRoomDTO> listDining;
 }

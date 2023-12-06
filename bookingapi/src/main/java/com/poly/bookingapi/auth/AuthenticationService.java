@@ -57,6 +57,23 @@ public class AuthenticationService {
     }
 
     public String register(RegisterRequest request) {
+
+        int count = 0;
+        for (Client c : clientRepository.findAll()) {
+            if(request.getSdt().equals(c.getSdt())) {
+                count++;
+            }
+        }
+        for (Admin c : adminRepository.findAll()) {
+            if (request.getSdt().equals(c.getSdt())) {
+                count++;
+            }
+        }
+
+        if(count != 0) {
+            return "Số điện thoại đã được đăng ký!!!";
+        }
+
         RoleAccount role = roleAccountRepository.getById(3);
         var user = new Account.Builder()
                 .setUsername(request.getSdt())

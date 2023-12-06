@@ -1,5 +1,6 @@
 package com.poly.bookingapi.dto;
 
+import com.poly.bookingapi.entity.ReservationProduct;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,24 +15,25 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationDTO {
+public class ReservationViewDTO {
 
     private Integer id;
     private String sdt;
+    private String fullname;
     private Integer numberOfPeopleBooked;
     private LocalDate reservationDate;
     private Integer idCategoryDiningRoom;
     private Integer idStatus;
     private Integer idClient;
-    private Integer idAdmin;
     private Integer idVoucher;
     private LocalTime startTime;
-    private LocalTime endTime;
     private LocalTime delayTime;
     private Long upfrontPrice;
+    private Long originalPrice;
+    private Long actualPrice;
+    private Long priceToPay;
     private LocalDate createdAt;
-    private List<ProductDTO> listProduct;
-    private List<ReservationPorductDTO> listReservationPorduct;
+    private List<ReservationProduct> listReservationPorduct;
 
 }
 
