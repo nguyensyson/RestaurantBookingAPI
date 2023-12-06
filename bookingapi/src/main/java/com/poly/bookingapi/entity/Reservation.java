@@ -1,11 +1,10 @@
 package com.poly.bookingapi.entity;
 
-import com.poly.bookingapi.dto.ReservationDTO;
+import com.poly.bookingapi.dto.ReservationViewDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -95,21 +94,25 @@ public class Reservation {
     @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY)
     private List<PaymentDetail> listPaymentDetail;
 
-    public ReservationDTO loadData(){
-        ReservationDTO reservation = new ReservationDTO();
+    public ReservationViewDTO loadData(){
+        ReservationViewDTO reservation = new ReservationViewDTO();
+        reservation.setId(id);
         reservation.setSdt(sdt);
         reservation.setNumberOfPeopleBooked(numberOfPeopleBooked);
         reservation.setReservationDate(reservationDate);
-//        reservation.setIdCategoryDiningRoom(categoryDiningRoom.getId());
-//        reservation.setIdStatus(status.getId());
-//        reservation.setIdClient(client.getId());
-//        reservation.setIdVoucher(voucher.getId());
-//        reservation.setIdAdmin(updatedBy.getId());
+        reservation.setFullname(fullNameClient);
+        reservation.setIdCategoryDiningRoom(categoryDiningRoom.getId());
+        reservation.setIdStatus(status.getId());
+        reservation.setIdClient(client.getId());
+        reservation.setIdVoucher(voucher.getId());
         reservation.setStartTime(startTime);
-        reservation.setEndTime(endTime);
         reservation.setDelayTime(delayTime);
         reservation.setUpfrontPrice(upfrontPrice);
+        reservation.setActualPrice(actualPrice);
+        reservation.setOriginalPrice(originalPrice);
+        reservation.setPriceToPay(priceToPay);
         reservation.setCreatedAt(createdAt);
+        reservation.setListReservationPorduct(listReservationProduct);
         return reservation;
     }
 }

@@ -15,4 +15,7 @@ public interface ClientRepository extends JpaRepository<Client, Integer> {
 
     @Query("SELECT c FROM Client c WHERE c.account.id = :id")
     Client getByAccount(@Param("id") Integer id);
+
+    @Query("SELECT c FROM Client c WHERE c.sdt LIKE :sdt")
+    Client getBySDT(@Param("sdt") String sdt);
 }

@@ -34,6 +34,22 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public String createAccount(AccountDTO dto) {
 
+        int count = 0;
+        for (Client c : clientRepository.findAll()) {
+            if(dto.getSdt().equals(c.getSdt())) {
+                count++;
+            }
+        }
+        for (Admin c : adminRepository.findAll()) {
+            if (dto.getSdt().equals(c.getSdt())) {
+                count++;
+            }
+        }
+
+        if(count != 0) {
+            return "Số điện thoại đã được đăng ký!!!";
+        }
+
         Account account = new Account();
         account.setUsername(dto.getSdt());
         account.setPassword(passwordEncoder.encode(dto.getPassword()));
