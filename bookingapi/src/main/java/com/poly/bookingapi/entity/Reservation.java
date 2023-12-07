@@ -94,6 +94,9 @@ public class Reservation {
     @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY)
     private List<PaymentDetail> listPaymentDetail;
 
+    @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY)
+    private List<TableDetail> listTableDetail;
+
     public ReservationViewDTO loadData(){
         ReservationViewDTO reservation = new ReservationViewDTO();
         reservation.setId(id);

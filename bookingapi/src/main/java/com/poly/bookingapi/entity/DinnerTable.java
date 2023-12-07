@@ -40,6 +40,8 @@ public class DinnerTable {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate updateAt;
 
+    @OneToMany(mappedBy = "dinnerTable", fetch = FetchType.LAZY)
+    private List<TableDetail> listTableDetail;
 
     public DinnerTableDTO loadData (DinnerTableDTO dinnerTableDTO){
         dinnerTableDTO.setNumberOfSeats(numberOfSeats);

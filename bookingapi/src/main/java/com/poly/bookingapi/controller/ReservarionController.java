@@ -1,6 +1,7 @@
 package com.poly.bookingapi.controller;
 
 import com.poly.bookingapi.dto.ReservationAddDTO;
+import com.poly.bookingapi.dto.ReservationUpdateDTO;
 import com.poly.bookingapi.dto.ReservationViewDTO;
 import com.poly.bookingapi.entity.CategoryDiningRoom;
 import com.poly.bookingapi.entity.DiningRoom;
@@ -48,7 +49,7 @@ public class ReservarionController {
     }
 
     @PostMapping("/api/admin/reservation/addByAdmin")
-    public ResponseEntity<?>addByAdmin(@RequestBody ReservationAddDTO dto){
+    public ResponseEntity<?>addByAdmin(@RequestBody ReservationUpdateDTO dto){
         reservationService.addByAdmin(dto);
         return  ResponseEntity.ok(new MessageResponse("add reservation by admin success"));
     }
