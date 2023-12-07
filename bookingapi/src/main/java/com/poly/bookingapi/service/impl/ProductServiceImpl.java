@@ -267,7 +267,12 @@ public class ProductServiceImpl implements ProductService {
             combo.setCategory(categoryProductRepository.findById(1).get());
             combo.setNameProduct(dto.getName());
             combo.setIntroduce(dto.getIntroduce());
-            combo.setPrice(dto.getPrice());
+
+            Long sum = Long.parseLong("0");
+            for (Product p: dto.getListItem()) {
+                sum = sum + p.getPrice();
+            }
+            combo.setPrice(sum);
             combo.setCreatedAt(LocalDate.now());
             combo.setUpdateAt(LocalDate.now());
 
@@ -309,7 +314,11 @@ public class ProductServiceImpl implements ProductService {
         try {
 
             Optional<Product> combo = productRepository.findById(id);
-            combo.get().setPrice(dto.getPrice());
+            Long sum = Long.parseLong("0");
+            for (Product p: dto.getListItem()) {
+                sum = sum + p.getPrice();
+            }
+            combo.get().setPrice(sum);
             combo.get().setUpdateAt(LocalDate.now());
             combo.get().setNameProduct(dto.getName());
             combo.get().setIntroduce(dto.getIntroduce());

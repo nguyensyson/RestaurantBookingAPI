@@ -25,6 +25,9 @@ public class DiningRoom {
     @Column(name = "maximum_occupancy")
     private Integer maximumOccupancy;
 
+    @Column(name = "number_of_available")
+    private Integer numberOfAvailable;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private CategoryDiningRoom category;
@@ -39,6 +42,9 @@ public class DiningRoom {
 
     @OneToMany(mappedBy = "diningRoom", fetch = FetchType.LAZY)
     private List<DinnerTable> listDinnerTable;
+
+    @OneToMany(mappedBy = "diningRoom", fetch = FetchType.LAZY)
+    private List<TableDetail> listTableDetail;
 
     public DiningRoomDTO loadData (DiningRoomDTO diningRoomDTO){
         diningRoomDTO.setMaximumOccupancy(maximumOccupancy);

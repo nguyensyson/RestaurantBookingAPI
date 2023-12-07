@@ -1,6 +1,7 @@
 package com.poly.bookingapi.service;
 
 import com.poly.bookingapi.dto.ReservationAddDTO;
+import com.poly.bookingapi.dto.ReservationUpdateDTO;
 import com.poly.bookingapi.dto.ReservationViewDTO;
 import com.poly.bookingapi.entity.CategoryDiningRoom;
 import com.poly.bookingapi.entity.DiningRoom;
@@ -13,7 +14,7 @@ public interface
 ReservationService {
     List<ReservationViewDTO> getAll();
     String addByUser(ReservationAddDTO reservationAddDTO);
-    void addByAdmin(ReservationAddDTO reservationAddDTO);
+    String addByAdmin(ReservationUpdateDTO reservationAddDTO);
     void addDiningRoom(CategoryDiningRoom categoryDiningRoom,Integer idRoom);
     void addDinnerTable(DiningRoom diningRoom, Integer idTable);
     Integer countReservation();

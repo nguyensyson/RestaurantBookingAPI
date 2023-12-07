@@ -20,7 +20,6 @@ public class ComboAddDTO {
     private MultipartFile avatar;
 //    private List<ImageProduct> images;
     private String name;
-    private Long price;
     private String introduce;
     private List<Product> listItem;
 }
