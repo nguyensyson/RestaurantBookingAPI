@@ -17,15 +17,11 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity
 public class ProductViewDTO {
 
-    @Id
     private Integer id;
-    @ManyToOne
     private CategoryProduct category;
     private String avatar;
-    @OneToMany
     private List<ImageProduct> images;
     private String name;
     private Long price;

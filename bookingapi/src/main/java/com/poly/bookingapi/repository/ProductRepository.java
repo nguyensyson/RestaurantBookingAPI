@@ -2,6 +2,7 @@ package com.poly.bookingapi.repository;
 
 import com.poly.bookingapi.dto.ProductViewDTO;
 import com.poly.bookingapi.entity.Product;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,25 +20,25 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT p " +
             "FROM Product p " +
             "WHERE p.category.id <> 1")
-    List<Product> getAllNotCombo();
+    Page<Product> getAllNotCombo();
 
     @Query("SELECT p " +
             "FROM Product p " +
             "WHERE p.category.id = :id")
-    List<Product> getByCategory(@Param("id") Integer id);
+    Page<Product> getByCategory(@Param("id") Integer id);
 
     @Query("SELECT p " +
             "FROM Product p " +
             "WHERE p.nameProduct LIKE %:name% AND p.category.id <> 1")
-    List<Product> searchByName(@Param("name") String name);
+    Page<Product> searchByName(@Param("name") String name);
 
     @Query("SELECT p " +
             "FROM Product p " +
             "WHERE p.nameProduct LIKE %:name% AND p.category.id = 1")
-    List<Product> searchComboByName(@Param("name") String name);
+    Page<Product> searchComboByName(@Param("name") String name);
 
     @Query("SELECT p " +
             "FROM Product p " +
             "WHERE p.category.id = 1")
-    List<Product> getAllCombo();
+    Page<Product> getAllCombo();
 }

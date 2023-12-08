@@ -33,6 +33,7 @@ public class ReservationAddDTO {
     private Long actualPrice;
     private Long priceToPay;
     private List<ProductDTO> listPorduct;
+    private Integer status;
 
 }
 
