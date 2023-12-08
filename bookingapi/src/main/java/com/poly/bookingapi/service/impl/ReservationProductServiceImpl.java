@@ -17,7 +17,7 @@ public class ReservationProductServiceImpl implements ReservationProductService 
 
     @Override
     public ReservationProduct getReservationAndProduct(Reservation reservation, Product product) {
-        return reservationProductRepository.findByReservationAndProduct(reservation,product);
+        return reservationProductRepository.findByReservationAndProduct(reservation.getId(),product.getId());
     }
 
     @Override

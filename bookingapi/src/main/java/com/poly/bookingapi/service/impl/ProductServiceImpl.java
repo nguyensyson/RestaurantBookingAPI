@@ -16,6 +16,8 @@ import com.poly.bookingapi.repository.ProductRepository;
 import com.poly.bookingapi.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -46,64 +49,70 @@ public class ProductServiceImpl implements ProductService {
     @Value("${cloudinary.api-secret}")
     private String apiSecret;
 
+//    @Override
+//    public Page<ProductViewDTO> getAllNotCombo() {
+//        Page<Product> productList = productRepository.getAllNotCombo();
+//        Page<ProductViewDTO> viewDTOS = new P
+//        for (Product p : productList) {
+//            ProductViewDTO dto = new ProductViewDTO();
+//            dto.setAvatar(p.getAvatar());
+//            dto.setCategory(p.getCategory());
+//            dto.setDiscount(p.getDiscount().getDiscountValue());
+//            dto.setId(p.getId());
+//            dto.setImages(p.getListImage());
+//            dto.setIntroduce(p.getIntroduce());
+//            dto.setName(p.getNameProduct());
+//            dto.setPrice(p.getPrice());
+//            dto.setStatus(p.getStatus().getId());
+//            viewDTOS.add(dto);
+//        }
+//        return viewDTOS;
+//    }
+
     @Override
-    public List<ProductViewDTO> getAllNotCombo() {
-        List<Product> productList = productRepository.getAllNotCombo();
-        List<ProductViewDTO> viewDTOS = new ArrayList<>();
-        for (Product p : productList) {
-            ProductViewDTO dto = new ProductViewDTO();
-            dto.setAvatar(p.getAvatar());
-            dto.setCategory(p.getCategory());
-            dto.setDiscount(p.getDiscount().getDiscountValue());
-            dto.setId(p.getId());
-            dto.setImages(p.getListImage());
-            dto.setIntroduce(p.getIntroduce());
-            dto.setName(p.getNameProduct());
-            dto.setPrice(p.getPrice());
-            dto.setStatus(p.getStatus().getId());
-            viewDTOS.add(dto);
-        }
-        return viewDTOS;
+    public Page<ProductViewDTO> getAllNotCombo() {
+        Page<Product> productList = productRepository.getAllNotCombo();
+
+        List<ProductViewDTO> viewDTOS = productList.getContent().stream()
+                .map(this::convertToProductViewDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(viewDTOS, productList.getPageable(), productList.getTotalElements());
+    }
+
+    private ProductViewDTO convertToProductViewDTO(Product p) {
+        ProductViewDTO dto = new ProductViewDTO();
+        dto.setAvatar(p.getAvatar());
+        dto.setCategory(p.getCategory());
+        dto.setDiscount(p.getDiscount().getDiscountValue());
+        dto.setId(p.getId());
+        dto.setImages(p.getListImage());
+        dto.setIntroduce(p.getIntroduce());
+        dto.setName(p.getNameProduct());
+        dto.setPrice(p.getPrice());
+        dto.setStatus(p.getStatus().getId());
+        return dto;
+    }
+
+
+    @Override
+    public Page<ProductViewDTO> getByCategory(Integer id) {
+        Page<Product> productList = productRepository.getByCategory(id);
+        List<ProductViewDTO> viewDTOS = productList.getContent().stream()
+                .map(this::convertToProductViewDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(viewDTOS, productList.getPageable(), productList.getTotalElements());
     }
 
     @Override
-    public List<ProductViewDTO> getByCategory(Integer id) {
-        List<Product> productList = productRepository.getByCategory(id);
-        List<ProductViewDTO> viewDTOS = new ArrayList<>();
-        for (Product p : productList) {
-            ProductViewDTO dto = new ProductViewDTO();
-            dto.setAvatar(p.getAvatar());
-            dto.setCategory(p.getCategory());
-            dto.setDiscount(p.getDiscount().getDiscountValue());
-            dto.setId(p.getId());
-            dto.setImages(p.getListImage());
-            dto.setIntroduce(p.getIntroduce());
-            dto.setName(p.getNameProduct());
-            dto.setPrice(p.getPrice());
-            dto.setStatus(p.getStatus().getId());
-            viewDTOS.add(dto);
-        }
-        return viewDTOS;
-    }
+    public Page<ProductViewDTO> search(String name) {
+        Page<Product> productList = productRepository.searchByName(name);
+        List<ProductViewDTO> viewDTOS = productList.getContent().stream()
+                .map(this::convertToProductViewDTO)
+                .collect(Collectors.toList());
 
-    @Override
-    public List<ProductViewDTO> search(String name) {
-        List<Product> productList = productRepository.searchByName(name);
-        List<ProductViewDTO> viewDTOS = new ArrayList<>();
-        for (Product p : productList) {
-            ProductViewDTO dto = new ProductViewDTO();
-            dto.setAvatar(p.getAvatar());
-            dto.setCategory(p.getCategory());
-            dto.setDiscount(p.getDiscount().getDiscountValue());
-            dto.setId(p.getId());
-            dto.setImages(p.getListImage());
-            dto.setIntroduce(p.getIntroduce());
-            dto.setName(p.getNameProduct());
-            dto.setPrice(p.getPrice());
-            dto.setStatus(p.getStatus().getId());
-            viewDTOS.add(dto);
-        }
-        return viewDTOS;
+        return new PageImpl<>(viewDTOS, productList.getPageable(), productList.getTotalElements());
     }
 
     @Override
@@ -123,45 +132,40 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ComboViewDTO> getAllCombo() {
-        List<Product> productList = productRepository.getAllCombo();
-        List<ComboViewDTO> viewDTOS = new ArrayList<>();
-        for (Product p : productList) {
-            ComboViewDTO dto = new ComboViewDTO();
-            dto.setAvatar(p.getAvatar());
-            dto.setCategory(p.getCategory());
-            dto.setDiscount(p.getDiscount().getDiscountValue());
-            dto.setId(p.getId());
-            dto.setImages(p.getListImage());
-            dto.setIntroduce(p.getIntroduce());
-            dto.setName(p.getNameProduct());
-            dto.setPrice(p.getPrice());
-            dto.setStatus(p.getStatus().getId());
-            dto.setListItem(p.getListitem());
-            viewDTOS.add(dto);
-        }
-        return viewDTOS;
+    public Page<ComboViewDTO> getAllCombo() {
+        Page<Product> productList = productRepository.getAllCombo();
+
+        List<ComboViewDTO> viewDTOS = productList.getContent().stream()
+                .map(this::convertToComboViewDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(viewDTOS, productList.getPageable(), productList.getTotalElements());
     }
 
+    private ComboViewDTO convertToComboViewDTO(Product p) {
+        ComboViewDTO dto = new ComboViewDTO();
+        dto.setAvatar(p.getAvatar());
+        dto.setCategory(p.getCategory());
+        dto.setDiscount(p.getDiscount().getDiscountValue());
+        dto.setId(p.getId());
+        dto.setImages(p.getListImage());
+        dto.setIntroduce(p.getIntroduce());
+        dto.setName(p.getNameProduct());
+        dto.setPrice(p.getPrice());
+        dto.setStatus(p.getStatus().getId());
+        dto.setListItem(p.getListitem());
+        return dto;
+    }
+
+
     @Override
-    public List<ComboViewDTO> searchCombo(String name) {
-        List<Product> productList = productRepository.searchComboByName(name);
-        List<ComboViewDTO> viewDTOS = new ArrayList<>();
-        for (Product p : productList) {
-            ComboViewDTO dto = new ComboViewDTO();
-            dto.setAvatar(p.getAvatar());
-            dto.setCategory(p.getCategory());
-            dto.setDiscount(p.getDiscount().getDiscountValue());
-            dto.setId(p.getId());
-            dto.setImages(p.getListImage());
-            dto.setIntroduce(p.getIntroduce());
-            dto.setName(p.getNameProduct());
-            dto.setPrice(p.getPrice());
-            dto.setStatus(p.getStatus().getId());
-            dto.setListItem(p.getListitem());
-            viewDTOS.add(dto);
-        }
-        return viewDTOS;
+    public Page<ComboViewDTO> searchCombo(String name) {
+        Page<Product> productList = productRepository.searchComboByName(name);
+        List<ComboViewDTO> viewDTOS = productList.getContent().stream()
+                .map(this::convertToComboViewDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(viewDTOS, productList.getPageable(), productList.getTotalElements());
     }
 
     @Override
@@ -314,7 +318,7 @@ public class ProductServiceImpl implements ProductService {
         try {
 
             Optional<Product> combo = productRepository.findById(id);
-            Long sum = Long.parseLong("0");
+            long sum = 0;
             for (Product p: dto.getListItem()) {
                 sum = sum + p.getPrice();
             }
