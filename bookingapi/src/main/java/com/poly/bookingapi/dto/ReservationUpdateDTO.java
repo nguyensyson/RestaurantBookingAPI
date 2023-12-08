@@ -29,6 +29,7 @@ public class ReservationUpdateDTO {
     private List<ProductDTO> listPorduct;
     private Integer idRoom;
     private List<Integer> idTable;
+    private Integer status;
 
 }
 

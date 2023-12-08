@@ -4,18 +4,19 @@ import com.poly.bookingapi.dto.ComboAddDTO;
 import com.poly.bookingapi.dto.ComboViewDTO;
 import com.poly.bookingapi.dto.ProductAddDTO;
 import com.poly.bookingapi.dto.ProductViewDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface ProductService {
 
-    List<ProductViewDTO> getAllNotCombo();
-    List<ProductViewDTO> getByCategory(Integer id);
-    List<ProductViewDTO> search(String name);
+    Page<ProductViewDTO> getAllNotCombo();
+    Page<ProductViewDTO> getByCategory(Integer id);
+    Page<ProductViewDTO> search(String name);
     ProductViewDTO getById(Integer id);
     ComboViewDTO getComboById(Integer id);
-    List<ComboViewDTO> getAllCombo();
-    List<ComboViewDTO> searchCombo(String name);
+    Page<ComboViewDTO> getAllCombo();
+    Page<ComboViewDTO> searchCombo(String name);
     String addProduct(ProductAddDTO dto);
     String updateProduct(ProductAddDTO dto, Integer id);
     String addCombo(ComboAddDTO dto);

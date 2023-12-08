@@ -1,12 +1,8 @@
 package com.poly.bookingapi.service.impl;
 
-import com.poly.bookingapi.dto.ProductDTO;
-import com.poly.bookingapi.dto.ReservationAddDTO;
-import com.poly.bookingapi.dto.ReservationUpdateDTO;
-import com.poly.bookingapi.dto.ReservationViewDTO;
+import com.poly.bookingapi.dto.*;
 import com.poly.bookingapi.entity.*;
 import com.poly.bookingapi.repository.*;
-import com.poly.bookingapi.respon.NotFoundException;
 import com.poly.bookingapi.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,7 +53,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public String addByUser(ReservationAddDTO dto) {
-
         Reservation reservation = new Reservation();
         reservation.setSdt(dto.getSdt());
         reservation.setFullNameClient(dto.getFullname());
@@ -69,7 +64,7 @@ public class ReservationServiceImpl implements ReservationService {
         // thời gian kết thúc của khách dự trù là 2 tiếng
         reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
         reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
-        if(dto.getIdClient() != null && clientRepository.getBySDT(dto.getSdt()) == null) {
+        if(dto.getIdClient() != null) {
             Client client = clientRepository.getClientById(dto.getIdClient());
             reservation.setClient(client);
         } else if(dto.getIdClient() == null && clientRepository.getBySDT(dto.getSdt()) != null) {
@@ -85,7 +80,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setPriceToPay(dto.getPriceToPay());
         reservation.setUpdateAt(LocalDate.now());
         reservation.setCreatedAt(LocalDate.now());
-        reservation.setStatus(reservationStatusRepository.findById(1).get());
+        reservation.setStatus(reservationStatusRepository.findById(dto.getStatus()).get());
         Reservation reservationAdd = reservationRepository.save(reservation);
 
         if(dto.getListPorduct().size() != 0) {
@@ -127,7 +122,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setPriceToPay(dto.getPriceToPay());
         reservation.setUpdateAt(LocalDate.now());
         reservation.setCreatedAt(LocalDate.now());
-        reservation.setStatus(reservationStatusRepository.findById(1).get());
+        reservation.setStatus(reservationStatusRepository.findById(3).get());
         Reservation reservationAdd = reservationRepository.save(reservation);
 
         if(dto.getListPorduct().size() != 0) {
@@ -165,68 +160,175 @@ public class ReservationServiceImpl implements ReservationService {
             tableDetail.setDiningRoom(diningRoomRepository.findById(dto.getIdRoom()).get());
             tableDetail.setCreatedAt(LocalDate.now());
             tableDetail.setUpdateAt(LocalDate.now());
+            tableDetailRepository.save(tableDetail);
         }
 
         return "Tạo phiếu đặt thành công";
     }
 
-    @Override
-    public void addDiningRoom(CategoryDiningRoom categoryDiningRoom, Integer idRoom) {
-        DiningRoom diningRoom = diningRoomRepository.
-                findById(idRoom).
-                orElse(null);
-        if (diningRoom != null) {
-            diningRoom.setCategory(categoryDiningRoom);
-            diningRoomRepository.save(diningRoom);
-        }
-    }
+//    @Override
+//    public void addDiningRoom(CategoryDiningRoom categoryDiningRoom, Integer idRoom) {
+//        DiningRoom diningRoom = diningRoomRepository.
+//                findById(idRoom).
+//                orElse(null);
+//        if (diningRoom != null) {
+//            diningRoom.setCategory(categoryDiningRoom);
+//            diningRoomRepository.save(diningRoom);
+//        }
+//    }
+//
+//    @Override
+//    public void addDinnerTable(DiningRoom diningRoom, Integer idTable) {
+//        DinnerTable dinnerTable = dinnerTableRepository.
+//                findById(idTable).
+//                orElse(null);
+//        if (dinnerTable != null) {
+//            dinnerTable.setDiningRoom(diningRoom);
+//            dinnerTableRepository.save(dinnerTable);
+//        }
+//    }
+
+//    @Override
+//    public Integer countReservation() {
+//        return reservationRepository.countReservation();
+//    }
 
     @Override
-    public void addDinnerTable(DiningRoom diningRoom, Integer idTable) {
-        DinnerTable dinnerTable = dinnerTableRepository.
-                findById(idTable).
-                orElse(null);
-        if (dinnerTable != null) {
-            dinnerTable.setDiningRoom(diningRoom);
+    public  String changePlaces(ChangePlacesDTO dto, Integer idResercation){
+        Reservation reservation = reservationRepository.findById(idResercation).get();
+        //kiểm tra xem có đổi loại phòng ko
+        int numberPeople = reservation.getNumberOfPeopleBooked();
+        if(reservation.getCategoryDiningRoom().getId() != dto.getIdCategoryDiningRoom()){
+            reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
+            reservationRepository.save(reservation);
+        }
+
+        //kiểm tra có đổi phòng hay không
+        List<TableDetail> oldTableDetail = tableDetailRepository.getByReservationId(idResercation);
+        int count = 0;
+        int idOldRoom = 0;
+        for (TableDetail t : oldTableDetail) {
+            if(t.getDiningRoom().getId() != dto.getIdRoom()) {
+                count++;
+                idOldRoom = t.getDiningRoom().getId();
+            }
+        }
+        if(count != 0) {
+            // set số chỗ còn trống trong phòng mới
+            DiningRoom diningRoom = diningRoomRepository.findById(dto.getIdRoom()).get();
+            diningRoom.setNumberOfAvailable(diningRoom.getNumberOfAvailable() - dto.getNumberOfPeopleBooked());
+            diningRoomRepository.save(diningRoom);
+
+            // set chỗ trống trong phòng cũ
+            DiningRoom oldDiningRoom = diningRoomRepository.findById(idOldRoom).get();
+            oldDiningRoom.setNumberOfAvailable(oldDiningRoom.getNumberOfAvailable() + numberPeople);
+            diningRoomRepository.save(oldDiningRoom);
+        }
+
+        //kiểm tra xem có đổi bàn hay không
+        List<Integer> listOldTable = new ArrayList<>();
+        for (TableDetail t: oldTableDetail) {
+            listOldTable.add(t.getDinnerTable().getId());
+        }
+        boolean areEqual = listOldTable.equals(dto.getIdTable());
+
+        if(areEqual) {
+            return "Check in thành công";
+        }
+        //cập nhật trạng thái cho các bàn cũ
+        for (TableDetail t : oldTableDetail) {
+            DinnerTable dinnerTable = dinnerTableRepository.findById(t.getDinnerTable().getId()).get();
+            dinnerTable.setStatus(1);
             dinnerTableRepository.save(dinnerTable);
         }
-    }
+        //đổi trạng thái cho bàn mới
+        for (Integer i : dto.getIdTable()) {
+            DinnerTable dinnerTable = dinnerTableRepository.findById(i).get();
+            dinnerTable.setStatus(0);
+            dinnerTableRepository.save(dinnerTable);
+        }
+        //xoá hết dữ liệu về bàn cũ
+        for (TableDetail t : oldTableDetail) {
+            tableDetailRepository.deleteById(t.getId());
+        }
+        //set table detail
+        for (Integer i : dto.getIdTable()) {
+            TableDetail tableDetail = new TableDetail();
+            tableDetail.setReservation(reservationRepository.findById(idResercation).get());
+            tableDetail.setDinnerTable(dinnerTableRepository.findById(i).get());
+            tableDetail.setDiningRoom(diningRoomRepository.findById(dto.getIdRoom()).get());
+            tableDetail.setCreatedAt(LocalDate.now());
+            tableDetail.setUpdateAt(LocalDate.now());
+            tableDetailRepository.save(tableDetail);
+        }
+
+        return "cập nhật thành công";
+    };
+    @Override
+    public  String changeProduct(ChangeProductDTO dto, Integer idResercation){
+        Reservation reservation = reservationRepository.findById(idResercation).get();
+        for (ProductDTO p : dto.getListPorduct()) {
+            if(reservationProductRepository.findByReservationAndProduct(reservation.getId(), p.getId()) != null) {
+                ReservationProduct reservationProduct = reservationProductRepository.findByReservationAndProduct(reservation.getId(), p.getId());
+                reservationProduct.setQuantity(p.getQuantity());
+                reservationProductRepository.save(reservationProduct);
+            } else {
+                Product product = productRepository.getById(p.getId());
+                ReservationProduct reservationProduct = new ReservationProduct();
+                reservationProduct.setReservation(reservation);
+                reservationProduct.setProduct(product);
+                reservationProduct.setNameProduct(p.getNameProduct());
+                reservationProduct.setPrice(p.getPrice());
+                reservationProduct.setQuantity(p.getQuantity());
+                reservationProductRepository.save(reservationProduct);
+            }
+        }
+
+        reservation.setOriginalPrice(dto.getOriginalPrice());
+        reservation.setActualPrice(dto.getActualPrice());
+        reservation.setPriceToPay(dto.getPriceToPay());
+        reservationRepository.save(reservation);
+        return "Cập nhật thành công";
+    };
 
     @Override
-    public Integer countReservation() {
-        return reservationRepository.countReservation();
-    }
+    public String arrangeSeats(ChangePlacesDTO dto, Integer idResercation){
+        // set số chỗ còn trống trong phòng
+        DiningRoom diningRoom = diningRoomRepository.findById(dto.getIdRoom()).get();
+        if(diningRoom.getNumberOfAvailable() == 0) {
+            diningRoom.setNumberOfAvailable(diningRoom.getMaximumOccupancy() - dto.getNumberOfPeopleBooked());
+            diningRoomRepository.save(diningRoom);
+        } else {
+            diningRoom.setNumberOfAvailable(diningRoom.getNumberOfAvailable() - dto.getNumberOfPeopleBooked());
+            diningRoomRepository.save(diningRoom);
+        }
+        //dổi trạng thái table
+        for (Integer i : dto.getIdTable()) {
+            DinnerTable dinnerTable = dinnerTableRepository.findById(i).get();
+            dinnerTable.setStatus(0);
+            dinnerTableRepository.save(dinnerTable);
+        }
+        //set table detail
+        Reservation reservation = reservationRepository.findById(idResercation).get();
+        for (Integer i : dto.getIdTable()) {
+            TableDetail tableDetail = new TableDetail();
+            tableDetail.setReservation(reservation);
+            tableDetail.setDinnerTable(dinnerTableRepository.findById(i).get());
+            tableDetail.setDiningRoom(diningRoomRepository.findById(dto.getIdRoom()).get());
+            tableDetail.setCreatedAt(LocalDate.now());
+            tableDetail.setUpdateAt(LocalDate.now());
+            tableDetailRepository.save(tableDetail);
+        }
+        return "Cập nhật thành công";
+    };
 
     @Override
-    public void checkIn(ReservationAddDTO reservationAddDTO, Integer id) {
-//        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found Reservation"));
-//        reservation.setStatus(ReservationStatus.builder().id(reservationViewDTO.getIdStatus()).build());
-//        long totalPrice = 0;
-//        if (reservationViewDTO.getListProduct() != null) {
-//            for (ProductDTO list : reservationViewDTO.getListProduct()) {
-//                ReservationProduct reservationProduct = new ReservationProduct();
-//                reservationProduct.setReservation(reservationRepository.save(reservation));
-//                Product product = productRepository.getById(list.getId());
-//                if (product.getNewPrice() != null) {
-//                    reservationProduct.setProduct(product);
-//                    reservationProduct.setNameProduct(product.getNameProduct());
-//                    reservationProduct.setPrice(product.getNewPrice());
-//                    reservationProduct.setQuantity(list.getQuantity());
-//                    reservationProduct.setSubToTal(product.getNewPrice() * list.getQuantity());
-//                    totalPrice += reservationProduct.getSubToTal();
-//                } else {
-//                    reservationProduct.setProduct(product);
-//                    reservationProduct.setNameProduct(product.getNameProduct());
-//                    reservationProduct.setPrice(product.getPrice());
-//                    reservationProduct.setQuantity(list.getQuantity());
-//                    reservationProduct.setSubToTal(product.getPrice() * list.getQuantity());
-//                    totalPrice += reservationProduct.getSubToTal();
-//                }
-//                reservationProductRepository.save(reservationProduct);
-//            }
-//        }
-//        reservation.setOriginalPrice(totalPrice);
-//        reservationRepository.save(reservation);
+    public String changeStatus(ChangeStatusDTO dto, Integer id) {
+        Reservation reservation = reservationRepository.findById(id).get();
+        reservation.setNumberOfPeopleBooked(dto.getNumberOfPeopleBooked());
+        reservation.setStatus(reservationStatusRepository.findById(dto.getStatus()).get());
+        reservationRepository.save(reservation);
+        return "Cập nhật thành công";
     }
 
     @Override
@@ -236,43 +338,47 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public void updateByClient(ReservationAddDTO reservationAddDTO, Integer id) {
-//        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found Reservation"));
-//        reservation.setStatus(ReservationStatus.builder().id(reservationViewDTO.getIdStatus()).build());
-//        reservation.setFullNameClient(reservation.getFullNameClient());
-//        reservation.setSdt(reservationViewDTO.getSdt());
-//        reservation.setNumberOfPeopleBooked(reservationViewDTO.getNumberOfPeopleBooked());
-//        reservation.setStartTime(reservationViewDTO.getStartTime());
-//        reservation.setDelayTime(reservationViewDTO.getDelayTime());
-//        reservation.setEndTime(reservationViewDTO.getEndTime());
-//        reservation.setCategoryDiningRoom(CategoryDiningRoom.builder().id(reservationViewDTO.getIdCategoryDiningRoom()).build());
-//        reservation.setCreatedAt(LocalDate.now());
-//        long totalPrice = 0;
-//        if (reservationViewDTO.getListProduct() != null) {
-//            for (ProductDTO list : reservationViewDTO.getListProduct()) {
-//                ReservationProduct reservationProduct = new ReservationProduct();
-//                reservationProduct.setReservation(reservationRepository.save(reservation));
-//                Product product = productRepository.getById(list.getId());
-//                if (product.getNewPrice() != null) {
-//                    reservationProduct.setProduct(product);
-//                    reservationProduct.setNameProduct(product.getNameProduct());
-//                    reservationProduct.setPrice(product.getNewPrice());
-//                    reservationProduct.setQuantity(list.getQuantity());
-//                    reservationProduct.setSubToTal(product.getNewPrice() * list.getQuantity());
-//                    totalPrice += reservationProduct.getSubToTal();
-//                } else {
-//                    reservationProduct.setProduct(product);
-//                    reservationProduct.setNameProduct(product.getNameProduct());
-//                    reservationProduct.setPrice(product.getPrice());
-//                    reservationProduct.setQuantity(list.getQuantity());
-//                    reservationProduct.setSubToTal(product.getPrice() * list.getQuantity());
-//                    totalPrice += reservationProduct.getSubToTal();
-//                }
-//                reservationProductRepository.save(reservationProduct);
-//            }
-//        }
-//        reservation.setOriginalPrice(totalPrice);
-//        reservationRepository.save(reservation);
+    public String updateByClient(ReservationAddDTO dto, Integer id) {
+        Reservation reservation = reservationRepository.findById(id).get();
+        reservation.setSdt(dto.getSdt());
+        reservation.setFullNameClient(dto.getFullname());
+        reservation.setNumberOfPeopleBooked(dto.getNumberOfPeopleBooked());
+        reservation.setReservationDate(dto.getDateTime().toLocalDate());
+        reservation.setStartTime(dto.getDateTime().toLocalTime());
+        // thời gian delay của khách mặc định cộng thêm 15p
+        reservation.setDelayTime(dto.getDateTime().toLocalTime().plusMinutes(15));
+        // thời gian kết thúc của khách dự trù là 2 tiếng
+        reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
+        reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
+        if(dto.getIdClient() != null) {
+            Client client = clientRepository.getClientById(dto.getIdClient());
+            reservation.setClient(client);
+        } else if(dto.getIdClient() == null && clientRepository.getBySDT(dto.getSdt()) != null) {
+            reservation.setClient(clientRepository.getBySDT(dto.getSdt()));
+        }
+        if(dto.getIdVoucher() != null) {
+            Voucher voucher = voucherRepository.getById(dto.getIdVoucher());
+            reservation.setVoucher(voucher);
+        }
+        reservation.setUpdateAt(LocalDate.now());
+        reservation.setStatus(reservationStatusRepository.findById(dto.getStatus()).get());
+        Reservation reservationAdd = reservationRepository.save(reservation);
+        return "Cập nhật phiếu đặt thành công";
+    }
+
+    @Override
+    public String updateByAdmin(ReservationUpdateDTO dto, Integer id) {
+        Reservation reservation = reservationRepository.findById(id).get();
+        reservation.setNumberOfPeopleBooked(dto.getNumberOfPeopleBooked());
+        reservation.setReservationDate(dto.getDateTime().toLocalDate());
+        reservation.setStartTime(dto.getDateTime().toLocalTime());
+        // thời gian delay của khách mặc định cộng thêm 15p
+        reservation.setDelayTime(dto.getDateTime().toLocalTime().plusMinutes(15));
+        // thời gian kết thúc của khách dự trù là 2 tiếng
+        reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
+        reservation.setUpdateAt(LocalDate.now());
+        reservationRepository.save(reservation);
+        return "Cập nhật thành công";
     }
 
     @Override
@@ -280,6 +386,4 @@ public class ReservationServiceImpl implements ReservationService {
         List<Reservation> reservations = reservationRepository.getReservationByUser(id);
         return reservations;
     }
-
-
 }
