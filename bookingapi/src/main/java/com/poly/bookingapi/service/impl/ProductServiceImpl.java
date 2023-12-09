@@ -75,8 +75,9 @@ public class ProductServiceImpl implements ProductService {
 //    }
 
     @Override
-    public Page<ProductViewDTO> getAllNotCombo() {
-        Page<Product> productList = productRepository.getAllNotCombo();
+    public Page<ProductViewDTO> getAllNotCombo(ProductSearchRequest model) {
+        Pageable pageable = PageRequest.of(model.getPage(), model.getSize());
+        Page<Product> productList = productRepository.getAllNotCombo(pageable);
 
         List<ProductViewDTO> viewDTOS = productList.getContent().stream()
             .map(this::convertToProductViewDTO)
@@ -99,27 +100,6 @@ public class ProductServiceImpl implements ProductService {
         return dto;
     }
 
-
-    @Override
-    public Page<ProductViewDTO> getByCategory(Integer id) {
-        Page<Product> productList = productRepository.getByCategory(id);
-        List<ProductViewDTO> viewDTOS = productList.getContent().stream()
-            .map(this::convertToProductViewDTO)
-            .collect(Collectors.toList());
-
-        return new PageImpl<>(viewDTOS, productList.getPageable(), productList.getTotalElements());
-    }
-
-    @Override
-    public Page<ProductViewDTO> search(String name) {
-        Page<Product> productList = productRepository.searchByName(name);
-        List<ProductViewDTO> viewDTOS = productList.getContent().stream()
-            .map(this::convertToProductViewDTO)
-            .collect(Collectors.toList());
-
-        return new PageImpl<>(viewDTOS, productList.getPageable(), productList.getTotalElements());
-    }
-
     @Override
     public ProductViewDTO getById(Integer id) {
         Optional<Product> p = productRepository.findById(id);
@@ -134,17 +114,6 @@ public class ProductServiceImpl implements ProductService {
         dto.setPrice(p.get().getPrice());
         dto.setStatus(p.get().getStatus().getId());
         return dto;
-    }
-
-    @Override
-    public Page<ComboViewDTO> getAllCombo() {
-        Page<Product> productList = productRepository.getAllCombo();
-
-        List<ComboViewDTO> viewDTOS = productList.getContent().stream()
-            .map(this::convertToComboViewDTO)
-            .collect(Collectors.toList());
-
-        return new PageImpl<>(viewDTOS, productList.getPageable(), productList.getTotalElements());
     }
 
     private ComboViewDTO convertToComboViewDTO(Product p) {
@@ -164,8 +133,9 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public Page<ComboViewDTO> searchCombo(String name) {
-        Page<Product> productList = productRepository.searchComboByName(name);
+    public Page<ComboViewDTO> searchCombo(ProductComboSearchRequest model) {
+        Pageable pageable = PageRequest.of(model.getPage(), model.getSize());
+        Page<Product> productList = productRepository.searchComboByName(model.getName(), pageable);
         List<ComboViewDTO> viewDTOS = productList.getContent().stream()
             .map(this::convertToComboViewDTO)
             .collect(Collectors.toList());

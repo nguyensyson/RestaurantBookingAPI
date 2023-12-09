@@ -5,19 +5,13 @@ import org.springframework.data.domain.Page;
 
 public interface ProductService {
 
-    Page<ProductViewDTO> getAllNotCombo();
-
-    Page<ProductViewDTO> getByCategory(Integer id);
-
-    Page<ProductViewDTO> search(String name);
+    Page<ProductViewDTO> getAllNotCombo(ProductSearchRequest request);
 
     ProductViewDTO getById(Integer id);
 
     ComboViewDTO getComboById(Integer id);
 
-    Page<ComboViewDTO> getAllCombo();
-
-    Page<ComboViewDTO> searchCombo(String name);
+    Page<ComboViewDTO> searchCombo(ProductComboSearchRequest model);
 
     String addProduct(ProductAddDTO dto);
 
