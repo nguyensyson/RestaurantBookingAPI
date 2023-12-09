@@ -1,9 +1,6 @@
 package com.poly.bookingapi.controller;
 
-import com.poly.bookingapi.dto.ComboViewDTO;
-import com.poly.bookingapi.dto.ProductCard;
-import com.poly.bookingapi.dto.ProductSearchRequest;
-import com.poly.bookingapi.dto.ProductViewDTO;
+import com.poly.bookingapi.dto.*;
 import com.poly.bookingapi.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,13 +15,8 @@ public class ProductController {
     ProductService productService;
 
     @GetMapping("/get-all")
-    public ResponseEntity<Page<ProductViewDTO>> getALL() {
-        return ResponseEntity.ok(productService.getAllNotCombo());
-    }
-
-    @GetMapping("/get-by-category/{id}")
-    public ResponseEntity<Page<ProductViewDTO>> getByCategory(@PathVariable Integer id) {
-        return ResponseEntity.ok(productService.getByCategory(id));
+    public ResponseEntity<Page<ProductViewDTO>> getALL(@RequestBody ProductSearchRequest model) {
+        return ResponseEntity.ok(productService.getAllNotCombo(model));
     }
 
     @GetMapping("/{id}")
@@ -37,19 +29,9 @@ public class ProductController {
         return ResponseEntity.ok(productService.getComboById(id));
     }
 
-    @GetMapping("/combo/get")
-    public ResponseEntity<Page<ComboViewDTO>> getCombo() {
-        return ResponseEntity.ok(productService.getAllCombo());
-    }
-
-    @GetMapping("/combo/search")
-    public ResponseEntity<Page<ComboViewDTO>> searchCombo(@RequestBody String text) {
-        return ResponseEntity.ok(productService.searchCombo(text));
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<Page<ProductViewDTO>> search(@RequestBody String text) {
-        return ResponseEntity.ok(productService.search(text));
+    @PostMapping("/combo/search")
+    public ResponseEntity<Page<ComboViewDTO>> searchCombo(@RequestBody ProductComboSearchRequest model) {
+        return ResponseEntity.ok(productService.searchCombo(model));
     }
 
     @PostMapping("/findBySearch")
