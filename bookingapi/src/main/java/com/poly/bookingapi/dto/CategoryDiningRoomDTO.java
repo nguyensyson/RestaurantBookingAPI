@@ -14,10 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 public class CategoryDiningRoomDTO {
 
-    private Integer idDinningRoom;
+    private Integer id;
     private String title;
-    private String introduce;
-    private BigDecimal fee;
-    private List<ReservationViewDTO> listReservation;
-    private List<DiningRoomDTO> listDining;
 }

@@ -18,6 +18,4 @@ public class DinnerTableDTO {
     private DiningRoom diningRoom;
     private Integer numberOfSeats;
     private Integer status;
-    private LocalDate createAt;
-    private LocalDate updateAt;
 }

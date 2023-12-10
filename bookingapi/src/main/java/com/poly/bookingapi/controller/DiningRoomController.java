@@ -1,11 +1,14 @@
 package com.poly.bookingapi.controller;
 
 import com.poly.bookingapi.dto.DiningRoomDTO;
+import com.poly.bookingapi.entity.DiningRoom;
 import com.poly.bookingapi.respon.MessageResponse;
 import com.poly.bookingapi.service.DiningRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class DiningRoomController {
@@ -14,19 +17,18 @@ public class DiningRoomController {
     private DiningRoomService diningRoomService;
 
     @GetMapping("api/view/dining-room/get")
-    public ResponseEntity<?> getAllDiningRoom(){
+    public ResponseEntity<List<DiningRoomDTO>> getAllDiningRoom(){
         return ResponseEntity.ok(diningRoomService.getAll());
     }
 
-    @PostMapping("api/admin/dining-room/add")
-    public ResponseEntity<?>addDiningRoom(@RequestBody DiningRoomDTO diningRoomDTO){
-        return ResponseEntity.ok(diningRoomService.add(diningRoomDTO));
+    @GetMapping("api/view/dining-room/get-by-id-category/{id}")
+    public ResponseEntity<List<DiningRoomDTO>> getByIdCategory(@PathVariable Integer id){
+        return ResponseEntity.ok(diningRoomService.getByIdCategory(id));
     }
 
-    @PutMapping("api/admin/dining-room/update/{id}")
-    public ResponseEntity<?>updateDiningRoom(@RequestBody DiningRoomDTO diningRoomDTO, @PathVariable Integer id){
-        diningRoomService.update(diningRoomDTO,id);
-        return ResponseEntity.ok(new MessageResponse("update dining room success"));
+    @PostMapping("api/admin/dining-room/add")
+    public ResponseEntity<DiningRoom>addDiningRoom(@RequestBody DiningRoomDTO diningRoomDTO){
+        return ResponseEntity.ok(diningRoomService.add(diningRoomDTO));
     }
 
 }
