@@ -27,7 +27,7 @@ public class ReservationAddDTO {
     private LocalDateTime dateTime;
     private Integer idCategoryDiningRoom;
 //    private Integer idClient;
-    private Integer idVoucher;
+    private String titleVoucher;
 //    private Long upfrontPrice;
     private Long originalPrice;
 //    private Long actualPrice;

@@ -72,9 +72,14 @@ public class ReservationServiceImpl implements ReservationService {
             reservation.setClient(clientRepository.getBySDT(dto.getSdt()));
         }
 //        }
-        if(dto.getIdVoucher() != null) {
-            Voucher voucher = voucherRepository.getById(dto.getIdVoucher());
+//        if(dto.getIdVoucher() != null) {
+//            Voucher voucher = voucherRepository.getById(dto.getIdVoucher());
+//            reservation.setVoucher(voucher);
+//        }
+        if(dto.getTitleVoucher() != null && voucherRepository.getByTitle(dto.getTitleVoucher()) != null) {
+            Voucher voucher = voucherRepository.getByTitle(dto.getTitleVoucher());
             reservation.setVoucher(voucher);
+            reservation.setActualPrice((dto.getOriginalPrice() * voucher.getVoucherValue()) / 100);
         }
 //        reservation.setUpfrontPrice(dto.getUpfrontPrice());
         reservation.setOriginalPrice(dto.getOriginalPrice());
@@ -287,8 +292,8 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         reservation.setOriginalPrice(dto.getOriginalPrice());
-        reservation.setActualPrice(dto.getActualPrice());
-        reservation.setPriceToPay(dto.getPriceToPay());
+        reservation.setActualPrice((dto.getOriginalPrice() * reservation.getVoucher().getVoucherValue()) / 100);
+//        reservation.setPriceToPay(dto.getPriceToPay());
         reservationRepository.save(reservation);
         return "Cập nhật thành công";
     };
@@ -358,10 +363,10 @@ public class ReservationServiceImpl implements ReservationService {
 //        } else if(dto.getIdClient() == null && clientRepository.getBySDT(dto.getSdt()) != null) {
 //            reservation.setClient(clientRepository.getBySDT(dto.getSdt()));
 //        }
-        if(dto.getIdVoucher() != null) {
-            Voucher voucher = voucherRepository.getById(dto.getIdVoucher());
-            reservation.setVoucher(voucher);
-        }
+//        if(dto.getIdVoucher() != null) {
+//            Voucher voucher = voucherRepository.getById(dto.getIdVoucher());
+//            reservation.setVoucher(voucher);
+//        }
         reservation.setUpdateAt(LocalDate.now());
         reservation.setStatus(reservationStatusRepository.findById(dto.getStatus()).get());
         Reservation reservationAdd = reservationRepository.save(reservation);
