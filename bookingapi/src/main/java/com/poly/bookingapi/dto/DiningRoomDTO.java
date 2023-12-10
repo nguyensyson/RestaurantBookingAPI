@@ -14,10 +14,10 @@ import java.util.List;
 @AllArgsConstructor
 public class DiningRoomDTO {
 
+    private Integer id;
     private Integer idCategoryDining;
     private Integer maximumOccupancy;
-    private LocalDate createAt;
-    private LocalDate updateAt;
+    private Integer numberOfAvailable;
     private List<DinnerTableDTO> listDinnerTable;
 
 

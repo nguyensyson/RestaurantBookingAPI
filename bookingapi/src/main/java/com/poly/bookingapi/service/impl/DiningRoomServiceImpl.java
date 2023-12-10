@@ -40,48 +40,49 @@ public class DiningRoomServiceImpl implements DiningRoomService {
     }
 
     @Override
+    public List<DiningRoomDTO> getByIdCategory(Integer id){
+        List<DiningRoom> list = diningRoomRepository.getByIdCategory(id);
+
+        List<DiningRoomDTO> newList = new ArrayList<>();
+        for (DiningRoom dining : list) {
+            DiningRoomDTO diningRoomDTO = new DiningRoomDTO();
+            DiningRoomDTO loadDining = dining.loadData(diningRoomDTO);
+            newList.add(loadDining);
+        }
+        return newList;
+    };
+
+    @Override
     public DiningRoom add(DiningRoomDTO diningRoomDTO) {
         DiningRoom diningRoom = new DiningRoom();
         diningRoom.setCategory(CategoryDiningRoom.builder().id(diningRoomDTO.getIdCategoryDining()).build());
         diningRoom.setMaximumOccupancy(diningRoomDTO.getMaximumOccupancy());
+        diningRoom.setNumberOfAvailable(diningRoomDTO.getMaximumOccupancy());
         diningRoom.setCreatedAt(LocalDate.now());
-        for (DinnerTableDTO list : diningRoomDTO.getListDinnerTable()) {
-            list.setDiningRoom(diningRoomRepository.save(diningRoom));
-            DinnerTable dinnerTable = dinnerTableRepository.getById(list.getId());
-            dinnerTable.setDiningRoom(list.getDiningRoom());
-            dinnerTableRepository.save(dinnerTable);
-        }
+        diningRoom.setUpdateAt(LocalDate.now());
+//        for (DinnerTableDTO list : diningRoomDTO.getListDinnerTable()) {
+//            list.setDiningRoom(diningRoomRepository.save(diningRoom));
+//            DinnerTable dinnerTable = dinnerTableRepository.getById(list.getId());
+//            dinnerTable.setDiningRoom(list.getDiningRoom());
+//            dinnerTableRepository.save(dinnerTable);
+//        }
         return diningRoomRepository.save(diningRoom);
     }
 
 
     @Override
-    public void update(DiningRoomDTO diningRoomDTO, Integer id) {
+    public DiningRoom update(DiningRoomDTO diningRoomDTO, Integer id) {
         DiningRoom diningRoom = diningRoomRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found diningRoom"));
         diningRoom.setMaximumOccupancy(diningRoomDTO.getMaximumOccupancy());
+        diningRoom.setNumberOfAvailable(diningRoomDTO.getMaximumOccupancy());
         diningRoom.setUpdateAt(LocalDate.now());
-        for (DinnerTableDTO list : diningRoomDTO.getListDinnerTable()) {
-            list.setDiningRoom(diningRoomRepository.save(diningRoom));
-            DinnerTable dinnerTable = dinnerTableRepository.getById(list.getId());
-            dinnerTable.setDiningRoom(list.getDiningRoom());
-            dinnerTableRepository.save(dinnerTable);
-        }
-        diningRoom.setUpdateAt(LocalDate.now());
-        diningRoomRepository.save(diningRoom);
-    }
-
-    @Override
-    public DiningRoom delete(Integer id) {
-        Optional<DiningRoom> optional = diningRoomRepository.findById(id);
-        return optional.map(diningRoom -> {
-            for (DinnerTable dinnerTable : diningRoom.getListDinnerTable()) {
-                DinnerTable dinner = dinnerTableRepository.getById(dinnerTable.getId());
-                dinner.setDiningRoom(null);
-                dinnerTableRepository.save(dinner);
-            }
-            diningRoomRepository.delete(diningRoom);
-            return diningRoom;
-        }).orElse(null);
+//        for (DinnerTableDTO list : diningRoomDTO.getListDinnerTable()) {
+//            list.setDiningRoom(diningRoomRepository.save(diningRoom));
+//            DinnerTable dinnerTable = dinnerTableRepository.getById(list.getId());
+//            dinnerTable.setDiningRoom(list.getDiningRoom());
+//            dinnerTableRepository.save(dinnerTable);
+//        }
+       return diningRoomRepository.save(diningRoom);
     }
 
 }

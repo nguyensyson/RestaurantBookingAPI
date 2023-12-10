@@ -48,8 +48,7 @@ public class DiningRoom {
 
     public DiningRoomDTO loadData (DiningRoomDTO diningRoomDTO){
         diningRoomDTO.setMaximumOccupancy(maximumOccupancy);
-        diningRoomDTO.setCreateAt(createdAt);
-        diningRoomDTO.setUpdateAt(updateAt);
+        diningRoomDTO.setNumberOfAvailable(numberOfAvailable);
         return diningRoomDTO;
     }
 }

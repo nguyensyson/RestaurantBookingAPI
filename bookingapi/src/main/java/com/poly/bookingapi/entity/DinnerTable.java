@@ -46,8 +46,6 @@ public class DinnerTable {
     public DinnerTableDTO loadData (DinnerTableDTO dinnerTableDTO){
         dinnerTableDTO.setNumberOfSeats(numberOfSeats);
         dinnerTableDTO.setStatus(status);
-        dinnerTableDTO.setCreateAt(createdAt);
-        dinnerTableDTO.setUpdateAt(updateAt);
         return dinnerTableDTO;
     }
 }

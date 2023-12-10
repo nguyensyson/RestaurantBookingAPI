@@ -64,20 +64,27 @@ public class ReservationServiceImpl implements ReservationService {
         // thời gian kết thúc của khách dự trù là 2 tiếng
         reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
         reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
-        if(dto.getIdClient() != null) {
-            Client client = clientRepository.getClientById(dto.getIdClient());
-            reservation.setClient(client);
-        } else if(dto.getIdClient() == null && clientRepository.getBySDT(dto.getSdt()) != null) {
+//        if(dto.getIdClient() != null) {
+//            Client client = clientRepository.getClientById(dto.getIdClient());
+//            reservation.setClient(client);
+//        } else if(dto.getIdClient() == null && clientRepository.getBySDT(dto.getSdt()) != null) {
+        if(clientRepository.getBySDT(dto.getSdt()) != null) {
             reservation.setClient(clientRepository.getBySDT(dto.getSdt()));
         }
-        if(dto.getIdVoucher() != null) {
-            Voucher voucher = voucherRepository.getById(dto.getIdVoucher());
+//        }
+//        if(dto.getIdVoucher() != null) {
+//            Voucher voucher = voucherRepository.getById(dto.getIdVoucher());
+//            reservation.setVoucher(voucher);
+//        }
+        if(dto.getTitleVoucher() != null && voucherRepository.getByTitle(dto.getTitleVoucher()) != null) {
+            Voucher voucher = voucherRepository.getByTitle(dto.getTitleVoucher());
             reservation.setVoucher(voucher);
+            reservation.setActualPrice((dto.getOriginalPrice() * voucher.getVoucherValue()) / 100);
         }
-        reservation.setUpfrontPrice(dto.getUpfrontPrice());
+//        reservation.setUpfrontPrice(dto.getUpfrontPrice());
         reservation.setOriginalPrice(dto.getOriginalPrice());
-        reservation.setActualPrice(dto.getActualPrice());
-        reservation.setPriceToPay(dto.getPriceToPay());
+//        reservation.setActualPrice(dto.getActualPrice());
+//        reservation.setPriceToPay(dto.getPriceToPay());
         reservation.setUpdateAt(LocalDate.now());
         reservation.setCreatedAt(LocalDate.now());
         reservation.setStatus(reservationStatusRepository.findById(dto.getStatus()).get());
@@ -285,8 +292,8 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         reservation.setOriginalPrice(dto.getOriginalPrice());
-        reservation.setActualPrice(dto.getActualPrice());
-        reservation.setPriceToPay(dto.getPriceToPay());
+        reservation.setActualPrice((dto.getOriginalPrice() * reservation.getVoucher().getVoucherValue()) / 100);
+//        reservation.setPriceToPay(dto.getPriceToPay());
         reservationRepository.save(reservation);
         return "Cập nhật thành công";
     };
@@ -350,16 +357,16 @@ public class ReservationServiceImpl implements ReservationService {
         // thời gian kết thúc của khách dự trù là 2 tiếng
         reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
         reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
-        if(dto.getIdClient() != null) {
-            Client client = clientRepository.getClientById(dto.getIdClient());
-            reservation.setClient(client);
-        } else if(dto.getIdClient() == null && clientRepository.getBySDT(dto.getSdt()) != null) {
-            reservation.setClient(clientRepository.getBySDT(dto.getSdt()));
-        }
-        if(dto.getIdVoucher() != null) {
-            Voucher voucher = voucherRepository.getById(dto.getIdVoucher());
-            reservation.setVoucher(voucher);
-        }
+//        if(dto.getIdClient() != null) {
+//            Client client = clientRepository.getClientById(dto.getIdClient());
+//            reservation.setClient(client);
+//        } else if(dto.getIdClient() == null && clientRepository.getBySDT(dto.getSdt()) != null) {
+//            reservation.setClient(clientRepository.getBySDT(dto.getSdt()));
+//        }
+//        if(dto.getIdVoucher() != null) {
+//            Voucher voucher = voucherRepository.getById(dto.getIdVoucher());
+//            reservation.setVoucher(voucher);
+//        }
         reservation.setUpdateAt(LocalDate.now());
         reservation.setStatus(reservationStatusRepository.findById(dto.getStatus()).get());
         Reservation reservationAdd = reservationRepository.save(reservation);
