@@ -13,5 +13,5 @@ public interface TableDetailRepository extends JpaRepository<TableDetail, Intege
 
     @Query("SELECT t FROM TableDetail t "
             + "WHERE t.reservation.id = :id")
-    List<TableDetail> getByReservationId(@Param("Id") Integer id);
+    List<TableDetail> getByReservationId(Integer id);
 }
