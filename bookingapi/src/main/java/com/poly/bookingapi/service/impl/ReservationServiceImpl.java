@@ -64,20 +64,22 @@ public class ReservationServiceImpl implements ReservationService {
         // thời gian kết thúc của khách dự trù là 2 tiếng
         reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
         reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
-        if(dto.getIdClient() != null) {
-            Client client = clientRepository.getClientById(dto.getIdClient());
-            reservation.setClient(client);
-        } else if(dto.getIdClient() == null && clientRepository.getBySDT(dto.getSdt()) != null) {
+//        if(dto.getIdClient() != null) {
+//            Client client = clientRepository.getClientById(dto.getIdClient());
+//            reservation.setClient(client);
+//        } else if(dto.getIdClient() == null && clientRepository.getBySDT(dto.getSdt()) != null) {
+        if(clientRepository.getBySDT(dto.getSdt()) != null) {
             reservation.setClient(clientRepository.getBySDT(dto.getSdt()));
         }
+//        }
         if(dto.getIdVoucher() != null) {
             Voucher voucher = voucherRepository.getById(dto.getIdVoucher());
             reservation.setVoucher(voucher);
         }
-        reservation.setUpfrontPrice(dto.getUpfrontPrice());
+//        reservation.setUpfrontPrice(dto.getUpfrontPrice());
         reservation.setOriginalPrice(dto.getOriginalPrice());
-        reservation.setActualPrice(dto.getActualPrice());
-        reservation.setPriceToPay(dto.getPriceToPay());
+//        reservation.setActualPrice(dto.getActualPrice());
+//        reservation.setPriceToPay(dto.getPriceToPay());
         reservation.setUpdateAt(LocalDate.now());
         reservation.setCreatedAt(LocalDate.now());
         reservation.setStatus(reservationStatusRepository.findById(dto.getStatus()).get());
@@ -350,12 +352,12 @@ public class ReservationServiceImpl implements ReservationService {
         // thời gian kết thúc của khách dự trù là 2 tiếng
         reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
         reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
-        if(dto.getIdClient() != null) {
-            Client client = clientRepository.getClientById(dto.getIdClient());
-            reservation.setClient(client);
-        } else if(dto.getIdClient() == null && clientRepository.getBySDT(dto.getSdt()) != null) {
-            reservation.setClient(clientRepository.getBySDT(dto.getSdt()));
-        }
+//        if(dto.getIdClient() != null) {
+//            Client client = clientRepository.getClientById(dto.getIdClient());
+//            reservation.setClient(client);
+//        } else if(dto.getIdClient() == null && clientRepository.getBySDT(dto.getSdt()) != null) {
+//            reservation.setClient(clientRepository.getBySDT(dto.getSdt()));
+//        }
         if(dto.getIdVoucher() != null) {
             Voucher voucher = voucherRepository.getById(dto.getIdVoucher());
             reservation.setVoucher(voucher);

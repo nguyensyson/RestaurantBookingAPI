@@ -26,12 +26,12 @@ public class ReservationAddDTO {
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime dateTime;
     private Integer idCategoryDiningRoom;
-    private Integer idClient;
+//    private Integer idClient;
     private Integer idVoucher;
-    private Long upfrontPrice;
+//    private Long upfrontPrice;
     private Long originalPrice;
-    private Long actualPrice;
-    private Long priceToPay;
+//    private Long actualPrice;
+//    private Long priceToPay;
     private List<ProductDTO> listPorduct;
     private Integer status;
 
