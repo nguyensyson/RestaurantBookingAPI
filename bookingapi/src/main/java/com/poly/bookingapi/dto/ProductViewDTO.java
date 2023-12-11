@@ -1,11 +1,8 @@
 package com.poly.bookingapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.poly.bookingapi.entity.CategoryProduct;
 import com.poly.bookingapi.entity.ImageProduct;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +17,7 @@ import java.util.List;
 public class ProductViewDTO {
 
     private Integer id;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private CategoryProduct category;
     private String avatar;
     private List<ImageProduct> images;
@@ -28,5 +26,4 @@ public class ProductViewDTO {
     private Integer discount;
     private String introduce;
     private Integer status;
-
 }

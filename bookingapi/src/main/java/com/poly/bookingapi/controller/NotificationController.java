@@ -12,22 +12,22 @@ public class NotificationController {
     private NotificationService notificationService;
 
     @GetMapping("api/view/notification/getAll")
-    public ResponseEntity<?> getAll(){
+    public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(notificationService.getAll());
     }
 
     @PostMapping("api/admin/notification/add")
-    public ResponseEntity<?>addNotification(@RequestBody NotificationDTO notificationDTO){
+    public ResponseEntity<?> addNotification(@RequestBody NotificationDTO notificationDTO) {
         return ResponseEntity.ok(notificationService.add(notificationDTO));
     }
 
     @PutMapping("api/admin/notification/update/{id}")
-    public ResponseEntity<?>updateNotification(@RequestBody NotificationDTO notificationDTO,@PathVariable Integer id){
+    public ResponseEntity<?> updateNotification(@RequestBody NotificationDTO notificationDTO, @PathVariable Integer id) {
         return ResponseEntity.ok(notificationService.update(notificationDTO, id));
     }
 
     @DeleteMapping("api/admin/notification/delete/{id}")
-    public ResponseEntity<?>deleteNotification(@PathVariable Integer id){
+    public ResponseEntity<?> deleteNotification(@PathVariable Integer id) {
         return ResponseEntity.ok(notificationService.delete(id));
     }
 }

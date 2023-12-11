@@ -1,10 +1,11 @@
 package com.poly.bookingapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,12 +19,13 @@ import java.util.List;
 public class Product {
 
     @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private CategoryProduct category;
 
     @Column(name = "avatar_product")
@@ -62,17 +64,27 @@ public class Product {
     private Admin updatedBy;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<ImageProduct> listImage;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<ProductEvaluate> listEvaluate;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<ReservationProduct> listReservationProduct;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "combo", fetch = FetchType.LAZY)
     private List<ComboDetail> listCombo;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
     private List<ComboDetail> listitem;
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updateAt = LocalDate.now();
+    }
 }

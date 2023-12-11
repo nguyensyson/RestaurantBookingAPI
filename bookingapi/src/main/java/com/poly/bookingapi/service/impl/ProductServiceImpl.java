@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.poly.bookingapi.constant.ProductConst;
 import com.poly.bookingapi.dto.*;
+import com.poly.bookingapi.entity.CategoryProduct;
 import com.poly.bookingapi.entity.ComboDetail;
 import com.poly.bookingapi.entity.ImageProduct;
 import com.poly.bookingapi.entity.Product;
@@ -90,13 +91,17 @@ public class ProductServiceImpl implements ProductService {
         ProductViewDTO dto = new ProductViewDTO();
         dto.setAvatar(p.getAvatar());
         dto.setCategory(p.getCategory());
-        dto.setDiscount(p.getDiscount().getDiscountValue());
+        if (p.getDiscount() != null) {
+            dto.setDiscount(p.getDiscount().getDiscountValue());
+        }
         dto.setId(p.getId());
         dto.setImages(p.getListImage());
         dto.setIntroduce(p.getIntroduce());
         dto.setName(p.getNameProduct());
         dto.setPrice(p.getPrice());
-        dto.setStatus(p.getStatus().getId());
+        if (p.getStatus() != null) {
+            dto.setStatus(p.getStatus().getId());
+        }
         return dto;
     }
 
@@ -106,13 +111,17 @@ public class ProductServiceImpl implements ProductService {
         ProductViewDTO dto = new ProductViewDTO();
         dto.setAvatar(p.get().getAvatar());
         dto.setCategory(p.get().getCategory());
-        dto.setDiscount(p.get().getDiscount().getDiscountValue());
+        if (p.get().getDiscount() != null) {
+            dto.setDiscount(p.get().getDiscount().getDiscountValue());
+        }
         dto.setId(p.get().getId());
         dto.setImages(p.get().getListImage());
         dto.setIntroduce(p.get().getIntroduce());
         dto.setName(p.get().getNameProduct());
         dto.setPrice(p.get().getPrice());
-        dto.setStatus(p.get().getStatus().getId());
+        if (p.get().getStatus() != null) {
+            dto.setStatus(p.get().getStatus().getId());
+        }
         return dto;
     }
 
@@ -162,8 +171,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public String addProduct(ProductAddDTO dto) {
+        CategoryProduct categoryProduct = categoryProductRepository.findById(dto.getCategory()).get();
         Product product = new Product();
-        product.setCategory(dto.getCategory());
+        product.setCategory(categoryProduct);
         product.setNameProduct(dto.getName());
         product.setIntroduce(dto.getIntroduce());
         product.setPrice(dto.getPrice());
@@ -192,18 +202,17 @@ public class ProductServiceImpl implements ProductService {
             imageProduct.setImages(imageUrl);
             imageProduct.setCreatedAt(LocalDate.now());
             imageProduct.setUpdateAt(LocalDate.now());
-            ImageProduct imageProduct1 = imageProductRepository.save(imageProduct);
+            imageProductRepository.save(imageProduct);
+            return "add thành công";
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("add thất bại");
         }
-
-        return "add thành công";
     }
 
     @Override
     public String updateProduct(ProductAddDTO dto, Integer id) {
         Optional<Product> product = productRepository.findById(id);
-        product.get().setCategory(dto.getCategory());
+        //  product.get().setCategory(dto.getCategory());
         product.get().setNameProduct(dto.getName());
         product.get().setIntroduce(dto.getIntroduce());
         product.get().setPrice(dto.getPrice());
