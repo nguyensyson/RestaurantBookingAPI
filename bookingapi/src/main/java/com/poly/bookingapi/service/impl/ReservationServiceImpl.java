@@ -5,12 +5,18 @@ import com.poly.bookingapi.entity.*;
 import com.poly.bookingapi.repository.*;
 import com.poly.bookingapi.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -38,17 +44,44 @@ public class ReservationServiceImpl implements ReservationService {
 
 
     @Override
-    public List<ReservationViewDTO> getAll() {
-
+    public Page<ReservationViewDTO> getAll(ReservationSortRequest model) {
         //Goi repo lay tu db
-        List<Reservation> getList = reservationRepository.findAll();
+        Pageable pageable = PageRequest.of(model.getPage(), model.getSize());
+        Page<Reservation> getList = reservationRepository.getAll(pageable);
         //Chuyển các entity thành các đối tượng Data Transfer Object(DTO) rồi trả về cho controller
-        List<ReservationViewDTO> getListDto = new ArrayList<>();
-        for (Reservation i : getList) {
-            ReservationViewDTO dtos = i.loadData();
-            getListDto.add(dtos);
+        List<ReservationViewDTO> viewDTOS = getList.getContent().stream()
+                .map(this::convertToReservationViewDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(viewDTOS, getList.getPageable(), getList.getTotalElements());
+    }
+
+    @Override
+    public Page<ReservationViewDTO> getByStatus(ReservationSortRequest model) {
+        Pageable pageable = PageRequest.of(model.getPage(), model.getSize());
+        Page<Reservation> getList = reservationRepository.getByStatus(model.getStatusID(), pageable);
+        //Chuyển các entity thành các đối tượng Data Transfer Object(DTO) rồi trả về cho controller
+        List<ReservationViewDTO> viewDTOS = getList.getContent().stream()
+                .map(this::convertToReservationViewDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(viewDTOS, getList.getPageable(), getList.getTotalElements());
+    };
+
+    private ReservationViewDTO convertToReservationViewDTO(Reservation reservation) {
+        ReservationViewDTO viewDTO = new ReservationViewDTO();
+        viewDTO.setId(reservation.getId());
+        viewDTO.setReservationDate(reservation.getReservationDate());
+        viewDTO.setCreatedAt(reservation.getCreatedAt());
+        viewDTO.setSdt(reservation.getSdt());
+        viewDTO.setFullname(reservation.getFullNameClient());
+        if(reservation.getStatus().getId() != null) {
+            viewDTO.setIdStatus(reservation.getStatus().getId());
         }
-        return getListDto;
+        if(reservation.getCategoryDiningRoom().getId() != null) {
+            viewDTO.setIdCategoryDiningRoom(reservation.getCategoryDiningRoom().getId());
+        }
+    return viewDTO;
     }
 
     @Override
@@ -63,7 +96,9 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setDelayTime(dto.getDateTime().toLocalTime().plusMinutes(15));
         // thời gian kết thúc của khách dự trù là 2 tiếng
         reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
-        reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
+        if(dto.getIdCategoryDiningRoom() != null) {
+            reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
+        }
 //        if(dto.getIdClient() != null) {
 //            Client client = clientRepository.getClientById(dto.getIdClient());
 //            reservation.setClient(client);
@@ -96,9 +131,14 @@ public class ReservationServiceImpl implements ReservationService {
                 ReservationProduct reservationProduct = new ReservationProduct();
                 reservationProduct.setReservation(reservationAdd);
                 reservationProduct.setProduct(product);
+                reservationProduct.setAvatarProduct(product.getAvatar());
+                reservationProduct.setNameProduct(product.getNameProduct());
                 reservationProduct.setNameProduct(p.getNameProduct());
                 reservationProduct.setPrice(p.getPrice());
                 reservationProduct.setQuantity(p.getQuantity());
+                reservationProduct.setSubToTal(p.getPrice() * p.getQuantity());
+                reservationProduct.setCreatedAt(LocalDate.now());
+                reservationProduct.setUpdateAt(LocalDate.now());
                 reservationProductRepository.save(reservationProduct);
             }
         }
@@ -129,7 +169,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setPriceToPay(dto.getPriceToPay());
         reservation.setUpdateAt(LocalDate.now());
         reservation.setCreatedAt(LocalDate.now());
-        reservation.setStatus(reservationStatusRepository.findById(3).get());
+        reservation.setStatus(reservationStatusRepository.findById(2).get());
         Reservation reservationAdd = reservationRepository.save(reservation);
 
         if(dto.getListPorduct().size() != 0) {
@@ -389,8 +429,14 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<Reservation> getReservationByUser(Integer id) {
-        List<Reservation> reservations = reservationRepository.getReservationByUser(id);
-        return reservations;
+    public Page<ReservationViewDTO> getReservationByUser(Integer id, ReservationSortRequest model) {
+        Pageable pageable = PageRequest.of(model.getPage(), model.getSize());
+        Page<Reservation> getList = reservationRepository.getReservationByUser(id, pageable);
+        //Chuyển các entity thành các đối tượng Data Transfer Object(DTO) rồi trả về cho controller
+        List<ReservationViewDTO> viewDTOS = getList.getContent().stream()
+                .map(this::convertToReservationViewDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(viewDTOS, getList.getPageable(), getList.getTotalElements());
     }
 }

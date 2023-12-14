@@ -428,7 +428,9 @@ public class ProductServiceImpl implements ProductService {
             productCard.setName(product.getNameProduct());
             productCard.setPrice(product.getPrice());
             productCard.setImageThumbnail(product.getAvatar());
-            productCard.setDiscount(product.getDiscount().getDiscountValue());
+            if(product.getDiscount() != null) {
+                productCard.setDiscount(product.getDiscount().getDiscountValue());
+            }
             productCardList.add(productCard);
         }
         return productCardList;

@@ -5,10 +5,12 @@ import com.poly.bookingapi.entity.Reservation;
 import com.poly.bookingapi.respon.NotFoundException;
 import com.poly.bookingapi.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -17,9 +19,14 @@ public class ReservarionController {
     @Autowired
     private ReservationService reservationService;
 
-    @GetMapping("/api/admin/reservation/get-all")
-    public ResponseEntity<List<ReservationViewDTO>>getAll(){
-        return ResponseEntity.ok(reservationService.getAll());
+    @PostMapping("/api/admin/reservation/get-all")
+    public ResponseEntity<Page<ReservationViewDTO>>getAll(@RequestBody ReservationSortRequest model){
+        return ResponseEntity.ok(reservationService.getAll(model));
+    }
+
+    @PostMapping("/api/admin/reservation/get-by-status")
+    public ResponseEntity<Page<ReservationViewDTO>>getByStatus(@RequestBody ReservationSortRequest model){
+        return ResponseEntity.ok(reservationService.getByStatus(model));
     }
 
 //    @GetMapping("/api/admin/reservation/getCountReservation")
@@ -27,14 +34,14 @@ public class ReservarionController {
 //        return ResponseEntity.ok(reservationService.countReservation());
 //    }
 
-    @GetMapping("/api/user/reservation/getAllByClient/{id}")
-    public ResponseEntity<List<Reservation>>getAllByClient(@PathVariable(value = "id") Integer id){
-        return ResponseEntity.ok(reservationService.getReservationByUser(id));
+    @PostMapping("/api/user/reservation/getAllByClient/{id}")
+    public ResponseEntity<Page<ReservationViewDTO>>getAllByClient(@PathVariable(value = "id") Integer id, @RequestBody ReservationSortRequest model){
+        return ResponseEntity.ok(reservationService.getReservationByUser(id, model));
     }
 
     @GetMapping("/api/user/reservation/detail/{id}")
-    public ResponseEntity<?> detailReservation(@PathVariable("id") Integer id){
-        return ResponseEntity.ok(reservationService.detailReservation(id).orElseThrow(() -> new NotFoundException("Not Found Reservation")));
+    public ResponseEntity<Optional<Reservation>> detailReservation(@PathVariable("id") Integer id){
+        return ResponseEntity.ok(reservationService.detailReservation(id));
     }
     //tạo bởi khách hàng
     @PostMapping("/api/view/reservation/addByUser")
@@ -72,13 +79,13 @@ public class ReservarionController {
     }
 
     @PutMapping("/api/admin/reservation/updateByadmin/{id}")
-    public  ResponseEntity<?>updateByAdmin(@RequestBody ReservationUpdateDTO dto,
+    public  ResponseEntity<String>updateByAdmin(@RequestBody ReservationUpdateDTO dto,
                                           @PathVariable Integer id){
         return ResponseEntity.ok(reservationService.updateByAdmin(dto, id));
     }
     // kh cập nhật thông tin phiếu
     @PutMapping("/api/user/reservation/updateByUser/{id}")
-    public  ResponseEntity<?>updateByUser(@RequestBody ReservationAddDTO dto,
+    public  ResponseEntity<String>updateByUser(@RequestBody ReservationAddDTO dto,
                                           @PathVariable Integer id){
         return ResponseEntity.ok(reservationService.updateByClient(dto, id));
     }
