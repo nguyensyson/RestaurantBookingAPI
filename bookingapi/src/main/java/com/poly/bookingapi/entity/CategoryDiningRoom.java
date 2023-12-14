@@ -1,10 +1,10 @@
 package com.poly.bookingapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,7 +18,7 @@ import java.util.List;
 public class CategoryDiningRoom {
 
     @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
@@ -40,8 +40,10 @@ public class CategoryDiningRoom {
     private LocalDate updateAt;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<DiningRoom> listImage;
 
     @OneToMany(mappedBy = "categoryDiningRoom", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Reservation> listReservation;
 }

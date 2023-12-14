@@ -1,22 +1,24 @@
 package com.poly.bookingapi.entity;
 
-import com.poly.bookingapi.dto.ReservationViewDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
 @Entity
 @Table(name = "reservation")
-public class Reservation {
+public class Reservation implements java.io.Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +44,7 @@ public class Reservation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_dining_room_id", referencedColumnName = "id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private CategoryDiningRoom categoryDiningRoom;
 
     @Column(name = "start_time")
@@ -58,6 +61,7 @@ public class Reservation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status_id", referencedColumnName = "id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private ReservationStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -89,12 +93,15 @@ public class Reservation {
     private Admin updatedBy;
 
     @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<ReservationProduct> listReservationProduct;
 
     @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<PaymentDetail> listPaymentDetail;
 
     @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<TableDetail> listTableDetail;
 
 //    public ReservationViewDTO loadData(){
