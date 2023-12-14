@@ -10,5 +10,5 @@ public interface DiningRoomService {
     List<DiningRoomDTO> getAll();
     DiningRoom add(DiningRoomDTO diningRoomDTO);
     DiningRoom update(DiningRoomDTO diningRoomDTO,Integer id);
-    List<DiningRoomDTO> getByIdCategory(Integer id);
+    List<DiningRoom> getByIdCategory(Integer id);
 }
