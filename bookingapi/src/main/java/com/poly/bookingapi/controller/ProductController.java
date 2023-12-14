@@ -14,7 +14,7 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
-    @GetMapping("/get-all")
+    @PostMapping("/get-all")
     public ResponseEntity<Page<ProductViewDTO>> getALL(@RequestBody ProductSearchRequest model) {
         return ResponseEntity.ok(productService.getAllNotCombo(model));
     }
