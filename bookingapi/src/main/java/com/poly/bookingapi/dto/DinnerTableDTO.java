@@ -15,7 +15,8 @@ import java.time.LocalDate;
 public class DinnerTableDTO {
 
     private Integer id;
-    private DiningRoom diningRoom;
+    private String tableCode;
     private Integer numberOfSeats;
     private Integer status;
+    private Integer idRoom;
 }

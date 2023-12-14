@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface VoucherService {
 
-    List<VoucherDTO>getALl();
+    List<VoucherDTO> getALl();
     Voucher add(VoucherDTO voucherDTO);
     Voucher update(VoucherDTO voucherDTO,Integer id);
     Voucher delete(Integer id);

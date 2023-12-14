@@ -1,6 +1,7 @@
 package com.poly.bookingapi.controller;
 
 import com.poly.bookingapi.dto.DiscountDTO;
+import com.poly.bookingapi.entity.Discount;
 import com.poly.bookingapi.respon.MessageResponse;
 import com.poly.bookingapi.service.DiscountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +15,18 @@ public class DiscountController {
     private DiscountService discountService;
 
     @PostMapping("api/admin/discount/add")
-    public ResponseEntity<?>add(@RequestBody DiscountDTO discountDTO){
+    public ResponseEntity<Discount>add(@RequestBody DiscountDTO discountDTO){
         return ResponseEntity.ok(discountService.add(discountDTO));
     }
 
 
     @PutMapping("api/admin/discount/update/{id}")
-    public ResponseEntity<?> update(@RequestBody DiscountDTO discountDTO,@PathVariable Integer id){
+    public ResponseEntity<Discount> update(@RequestBody DiscountDTO discountDTO,@PathVariable Integer id){
         return ResponseEntity.ok(discountService.update(discountDTO, id));
     }
 
     @PutMapping("api/admin/discount/enable/{id}")
-    public ResponseEntity<?> enabled(@PathVariable Integer id){
+    public ResponseEntity<Discount> enabled(@PathVariable Integer id){
         return ResponseEntity.ok(discountService.enable(id));
     }
 

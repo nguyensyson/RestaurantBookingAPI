@@ -19,7 +19,6 @@ public class ReservationUpdateDTO {
     private String sdt;
     private String fullname;
     private Integer numberOfPeopleBooked;
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime dateTime;
     private Integer idCategoryDiningRoom;
     private Long upfrontPrice;

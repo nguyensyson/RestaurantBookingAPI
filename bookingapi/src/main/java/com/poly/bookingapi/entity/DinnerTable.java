@@ -22,6 +22,9 @@ public class DinnerTable {
     @Column(name = "id")
     private Integer id;
 
+    @Column(name = "table_code")
+    private String tableCode;
+
     @Column(name = "number_of_seats")
     private Integer numberOfSeats;
 

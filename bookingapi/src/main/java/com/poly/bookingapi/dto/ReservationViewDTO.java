@@ -24,16 +24,16 @@ public class ReservationViewDTO {
     private LocalDate reservationDate;
     private Integer idCategoryDiningRoom;
     private Integer idStatus;
-    private Integer idClient;
-    private Integer idVoucher;
-    private LocalTime startTime;
-    private LocalTime delayTime;
-    private Long upfrontPrice;
-    private Long originalPrice;
-    private Long actualPrice;
-    private Long priceToPay;
+//    private Integer idClient;
+//    private Integer idVoucher;
+//    private LocalTime startTime;
+//    private LocalTime delayTime;
+//    private Long upfrontPrice;
+//    private Long originalPrice;
+//    private Long actualPrice;
+//    private Long priceToPay;
     private LocalDate createdAt;
-    private List<ReservationProduct> listReservationPorduct;
+//    private List<ReservationProduct> listReservationPorduct;
 
 }
 
