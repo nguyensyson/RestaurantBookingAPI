@@ -7,6 +7,7 @@ import com.poly.bookingapi.dto.ReservationViewDTO;
 import com.poly.bookingapi.entity.DiningRoom;
 import com.poly.bookingapi.entity.DinnerTable;
 import com.poly.bookingapi.entity.Reservation;
+import com.poly.bookingapi.proxydto.DinnerTableProxy;
 import com.poly.bookingapi.repository.DinnerTableRepository;
 import com.poly.bookingapi.service.DinnerTableService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,5 +81,22 @@ public class DinnerTableServiceImpl implements DinnerTableService {
             dinnerTableRepository.delete(dinnerTable);
             return dinnerTable;
         }).orElse(null);
+    }
+
+    /**
+     * @param id id của DiningRoom
+     * @return danh sách các bàn ăn thuộc DiningRoom có id truyền vào
+     * @see com.poly.bookingapi.repository.DinnerTableRepository#getAllByDiningRoomId(Integer)
+     * @see com.poly.bookingapi.proxydto.DinnerTableProxy
+     * @see com.poly.bookingapi.controller.DinnerTableController#getAllDinnerTable(DinnerTableRequest)
+     *  <p>
+     *      Lấy danh sách các bàn ăn thuộc DiningRoom có id truyền vào
+     *      Sử dụng DinnerTableProxy để lấy thông tin DiningRoom của bàn ăn
+     *      Trả về danh sách các bàn ăn
+     *  </p>
+     */
+    @Override
+    public List<DinnerTableProxy> getAllByDiningRoomId(Integer id) {
+        return dinnerTableRepository.getAllByDiningRoomId(id);
     }
 }

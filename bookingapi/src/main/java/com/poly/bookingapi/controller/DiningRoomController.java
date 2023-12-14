@@ -22,7 +22,7 @@ public class DiningRoomController {
     }
 
     @GetMapping("api/view/dining-room/get-by-id-category/{id}")
-    public ResponseEntity<List<DiningRoomDTO>> getByIdCategory(@PathVariable Integer id){
+    public ResponseEntity<List<DiningRoom>> getByIdCategory(@PathVariable Integer id){
         return ResponseEntity.ok(diningRoomService.getByIdCategory(id));
     }
 
@@ -30,5 +30,4 @@ public class DiningRoomController {
     public ResponseEntity<DiningRoom>addDiningRoom(@RequestBody DiningRoomDTO diningRoomDTO){
         return ResponseEntity.ok(diningRoomService.add(diningRoomDTO));
     }
-
 }
