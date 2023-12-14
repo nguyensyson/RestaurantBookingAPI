@@ -1,7 +1,10 @@
 package com.poly.bookingapi.service;
 
 import com.poly.bookingapi.dto.*;
+import com.poly.bookingapi.proxydto.ProductProxy;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface ProductService {
 
@@ -22,4 +25,6 @@ public interface ProductService {
     String updateCombo(ComboAddDTO dto, Integer id);
 
     Page<ProductCard> findBySearch(ProductSearchRequest request);
+
+    List<ProductProxy> getAll(Integer id);
 }
