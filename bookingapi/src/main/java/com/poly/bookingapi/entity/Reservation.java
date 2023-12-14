@@ -97,25 +97,25 @@ public class Reservation {
     @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY)
     private List<TableDetail> listTableDetail;
 
-    public ReservationViewDTO loadData(){
-        ReservationViewDTO reservation = new ReservationViewDTO();
-        reservation.setId(id);
-        reservation.setSdt(sdt);
-        reservation.setNumberOfPeopleBooked(numberOfPeopleBooked);
-        reservation.setReservationDate(reservationDate);
-        reservation.setFullname(fullNameClient);
-        reservation.setIdCategoryDiningRoom(categoryDiningRoom.getId());
-        reservation.setIdStatus(status.getId());
-        reservation.setIdClient(client.getId());
-        reservation.setIdVoucher(voucher.getId());
-        reservation.setStartTime(startTime);
-        reservation.setDelayTime(delayTime);
-        reservation.setUpfrontPrice(upfrontPrice);
-        reservation.setActualPrice(actualPrice);
-        reservation.setOriginalPrice(originalPrice);
-        reservation.setPriceToPay(priceToPay);
-        reservation.setCreatedAt(createdAt);
-        reservation.setListReservationPorduct(listReservationProduct);
-        return reservation;
-    }
+//    public ReservationViewDTO loadData(){
+//        ReservationViewDTO reservation = new ReservationViewDTO();
+//        reservation.setId(id);
+//        reservation.setSdt(sdt);
+//        reservation.setNumberOfPeopleBooked(numberOfPeopleBooked);
+//        reservation.setReservationDate(reservationDate);
+//        reservation.setFullname(fullNameClient);
+//        reservation.setIdCategoryDiningRoom(categoryDiningRoom.getId());
+//        reservation.setIdStatus(status.getId());
+//        reservation.setIdClient(client.getId());
+//        reservation.setIdVoucher(voucher.getId());
+//        reservation.setStartTime(startTime);
+//        reservation.setDelayTime(delayTime);
+//        reservation.setUpfrontPrice(upfrontPrice);
+//        reservation.setActualPrice(actualPrice);
+//        reservation.setOriginalPrice(originalPrice);
+//        reservation.setPriceToPay(priceToPay);
+//        reservation.setCreatedAt(createdAt);
+//        reservation.setListReservationPorduct(listReservationProduct);
+//        return reservation;
+//    }
 }

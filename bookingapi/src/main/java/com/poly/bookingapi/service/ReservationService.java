@@ -2,13 +2,15 @@ package com.poly.bookingapi.service;
 
 import com.poly.bookingapi.dto.*;
 import com.poly.bookingapi.entity.Reservation;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface
 ReservationService {
-    List<ReservationViewDTO> getAll();
+    Page<ReservationViewDTO> getAll(ReservationSortRequest model);
+    Page<ReservationViewDTO> getByStatus(ReservationSortRequest model);
     String addByUser(ReservationAddDTO reservationAddDTO);
     String addByAdmin(ReservationUpdateDTO reservationAddDTO);
 //    void addDiningRoom(CategoryDiningRoom categoryDiningRoom,Integer idRoom);
@@ -19,7 +21,7 @@ ReservationService {
     Optional<Reservation> detailReservation(Integer id);
     String updateByClient(ReservationAddDTO reservationAddDTO, Integer id);
     String updateByAdmin(ReservationUpdateDTO reservationAddDTO, Integer id);
-    List<Reservation> getReservationByUser(Integer id);
+    Page<ReservationViewDTO> getReservationByUser(Integer id, ReservationSortRequest model);
     String changePlaces(ChangePlacesDTO dto, Integer idResercation);
     String changeProduct(ChangeProductDTO dto, Integer idResercation);
     String arrangeSeats(ChangePlacesDTO dto, Integer idResercation);
