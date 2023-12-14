@@ -8,6 +8,7 @@ import com.poly.bookingapi.entity.CategoryProduct;
 import com.poly.bookingapi.entity.ComboDetail;
 import com.poly.bookingapi.entity.ImageProduct;
 import com.poly.bookingapi.entity.Product;
+import com.poly.bookingapi.proxydto.ProductProxy;
 import com.poly.bookingapi.repository.CategoryProductRepository;
 import com.poly.bookingapi.repository.ComboDetailRepository;
 import com.poly.bookingapi.repository.ImageProductRepository;
@@ -373,6 +374,11 @@ public class ProductServiceImpl implements ProductService {
         this.setParameter(countQuery, model);
         Integer count = (Integer) countQuery.getSingleResult();
         return new PageImpl<>(productCardList, pageable, count);
+    }
+
+    @Override
+    public List<ProductProxy> getAll(Integer id) {
+        return productRepository.getAll(id);
     }
 
     private String buildQuery(ProductSearchRequest model) {
