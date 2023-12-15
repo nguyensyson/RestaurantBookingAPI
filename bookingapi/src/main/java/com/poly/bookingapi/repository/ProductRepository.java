@@ -29,11 +29,11 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("select p.id as id, " +
         "p.nameProduct as name," +
-        " p.price as price," +
-        "  COALESCE(rp.quantity, 1) AS quantity, " +
-        "  (case when count(distinct rp.id) > 0 then true else false end ) as isOrdered from " +
-        "  Product p LEFT JOIN ReservationProduct rp ON p.id = rp.product.id " +
-        "  group by p.id,p.nameProduct,p.price,COALESCE(rp.quantity, 1) " +
-        "   order by p.id desc")
+        "p.price as price," +
+        "coalesce(sum(rp.quantity),0) as quantity, " +
+        "(case when count(distinct rp.id) > 0 then true else false end ) as isOrdered from " +
+        "Product p left join ReservationProduct rp ON (p.id = rp.product.id and rp.reservation.id = :id) " +
+        "group by p.id " +
+        "order by p.id desc")
     List<ProductProxy> getAll(Integer id);
 }
