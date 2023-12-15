@@ -1,13 +1,11 @@
 package com.poly.bookingapi.repository;
 
-import com.poly.bookingapi.dto.ProductViewDTO;
 import com.poly.bookingapi.entity.Product;
 import com.poly.bookingapi.proxydto.ProductProxy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -29,9 +27,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
         "WHERE (:name is null or p.nameProduct LIKE %:name% ) AND p.category.id = 1")
     Page<Product> searchComboByName(String name, Pageable pageable);
 
-    @Query("select p.id as id, p.nameProduct as name, p.price as price," +
-        " (case when  (select count(rp) from ReservationProduct rp where rp.reservation.id = :id and rp.product.id = p.id) > 0 then true else false end) as isOrdered " +
-        "from Product p " +
-        "order by p.id desc")
+    @Query("select p.id as id, " +
+        "p.nameProduct as name," +
+        " p.price as price," +
+        "  COALESCE(rp.quantity, 1) AS quantity, " +
+        "  (case when count(distinct rp.id) > 0 then true else false end ) as isOrdered from " +
+        "  Product p LEFT JOIN ReservationProduct rp ON p.id = rp.product.id " +
+        "  group by p.id,p.nameProduct,p.price,COALESCE(rp.quantity, 1) " +
+        "   order by p.id desc")
     List<ProductProxy> getAll(Integer id);
 }
