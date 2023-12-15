@@ -40,16 +40,8 @@ public class DiningRoomServiceImpl implements DiningRoomService {
     }
 
     @Override
-    public List<DiningRoomDTO> getByIdCategory(Integer id){
-        List<DiningRoom> list = diningRoomRepository.getByIdCategory(id);
-
-        List<DiningRoomDTO> newList = new ArrayList<>();
-        for (DiningRoom dining : list) {
-            DiningRoomDTO diningRoomDTO = new DiningRoomDTO();
-            DiningRoomDTO loadDining = dining.loadData(diningRoomDTO);
-            newList.add(loadDining);
-        }
-        return newList;
+    public List<DiningRoom> getByIdCategory(Integer id){
+        return diningRoomRepository.getByIdCategory(id);
     };
 
     @Override

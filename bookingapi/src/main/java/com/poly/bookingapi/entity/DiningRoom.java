@@ -1,5 +1,7 @@
 package com.poly.bookingapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.poly.bookingapi.dto.DiningRoomDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,29 +23,24 @@ public class DiningRoom {
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-
-    @Column(name = "maximum_occupancy")
     private Integer maximumOccupancy;
-
-    @Column(name = "number_of_available")
+    private String name;
     private Integer numberOfAvailable;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private CategoryDiningRoom category;
 
-    @Column(name = "created_at")
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate createdAt;
-
-    @Column(name = "update_at")
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate updateAt;
 
     @OneToMany(mappedBy = "diningRoom", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<DinnerTable> listDinnerTable;
 
     @OneToMany(mappedBy = "diningRoom", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<TableDetail> listTableDetail;
 
     public DiningRoomDTO loadData (DiningRoomDTO diningRoomDTO){
