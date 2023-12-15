@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -50,8 +49,8 @@ public class ReservationServiceImpl implements ReservationService {
         Page<Reservation> getList = reservationRepository.getAll(pageable);
         //Chuyển các entity thành các đối tượng Data Transfer Object(DTO) rồi trả về cho controller
         List<ReservationViewDTO> viewDTOS = getList.getContent().stream()
-                .map(this::convertToReservationViewDTO)
-                .collect(Collectors.toList());
+            .map(this::convertToReservationViewDTO)
+            .collect(Collectors.toList());
 
         return new PageImpl<>(viewDTOS, getList.getPageable(), getList.getTotalElements());
     }
@@ -62,11 +61,13 @@ public class ReservationServiceImpl implements ReservationService {
         Page<Reservation> getList = reservationRepository.getByStatus(model.getStatusID(), pageable);
         //Chuyển các entity thành các đối tượng Data Transfer Object(DTO) rồi trả về cho controller
         List<ReservationViewDTO> viewDTOS = getList.getContent().stream()
-                .map(this::convertToReservationViewDTO)
-                .collect(Collectors.toList());
+            .map(this::convertToReservationViewDTO)
+            .collect(Collectors.toList());
 
         return new PageImpl<>(viewDTOS, getList.getPageable(), getList.getTotalElements());
-    };
+    }
+
+    ;
 
     private ReservationViewDTO convertToReservationViewDTO(Reservation reservation) {
         ReservationViewDTO viewDTO = new ReservationViewDTO();
@@ -75,13 +76,13 @@ public class ReservationServiceImpl implements ReservationService {
         viewDTO.setCreatedAt(reservation.getCreatedAt());
         viewDTO.setSdt(reservation.getSdt());
         viewDTO.setFullname(reservation.getFullNameClient());
-        if(reservation.getStatus().getId() != null) {
+        if (reservation.getStatus().getId() != null) {
             viewDTO.setIdStatus(reservation.getStatus().getId());
         }
-        if(reservation.getCategoryDiningRoom().getId() != null) {
+        if (reservation.getCategoryDiningRoom().getId() != null) {
             viewDTO.setIdCategoryDiningRoom(reservation.getCategoryDiningRoom().getId());
         }
-    return viewDTO;
+        return viewDTO;
     }
 
     @Override
@@ -96,14 +97,14 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setDelayTime(dto.getDateTime().toLocalTime().plusMinutes(15));
         // thời gian kết thúc của khách dự trù là 2 tiếng
         reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
-        if(dto.getIdCategoryDiningRoom() != null) {
+        if (dto.getIdCategoryDiningRoom() != null) {
             reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
         }
 //        if(dto.getIdClient() != null) {
 //            Client client = clientRepository.getClientById(dto.getIdClient());
 //            reservation.setClient(client);
 //        } else if(dto.getIdClient() == null && clientRepository.getBySDT(dto.getSdt()) != null) {
-        if(clientRepository.getBySDT(dto.getSdt()) != null) {
+        if (clientRepository.getBySDT(dto.getSdt()) != null) {
             reservation.setClient(clientRepository.getBySDT(dto.getSdt()));
         }
 //        }
@@ -111,7 +112,7 @@ public class ReservationServiceImpl implements ReservationService {
 //            Voucher voucher = voucherRepository.getById(dto.getIdVoucher());
 //            reservation.setVoucher(voucher);
 //        }
-        if(dto.getTitleVoucher() != null && voucherRepository.getByTitle(dto.getTitleVoucher()) != null) {
+        if (dto.getTitleVoucher() != null && voucherRepository.getByTitle(dto.getTitleVoucher()) != null) {
             Voucher voucher = voucherRepository.getByTitle(dto.getTitleVoucher());
             reservation.setVoucher(voucher);
             reservation.setActualPrice((dto.getOriginalPrice() * voucher.getVoucherValue()) / 100);
@@ -125,8 +126,8 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setStatus(reservationStatusRepository.findById(dto.getStatus()).get());
         Reservation reservationAdd = reservationRepository.save(reservation);
 
-        if(dto.getListPorduct().size() != 0) {
-            for (ProductDTO p: dto.getListPorduct()) {
+        if (dto.getListPorduct().size() != 0) {
+            for (ProductDTO p : dto.getListPorduct()) {
                 Product product = productRepository.getById(p.getId());
                 ReservationProduct reservationProduct = new ReservationProduct();
                 reservationProduct.setReservation(reservationAdd);
@@ -160,7 +161,7 @@ public class ReservationServiceImpl implements ReservationService {
         // thời gian kết thúc của khách dự trù là 2 tiếng
         reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
         reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
-        if(clientRepository.getBySDT(dto.getSdt()) != null) {
+        if (clientRepository.getBySDT(dto.getSdt()) != null) {
             reservation.setClient(clientRepository.getBySDT(dto.getSdt()));
         }
         reservation.setUpfrontPrice(dto.getUpfrontPrice());
@@ -172,8 +173,8 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setStatus(reservationStatusRepository.findById(2).get());
         Reservation reservationAdd = reservationRepository.save(reservation);
 
-        if(dto.getListPorduct().size() != 0) {
-            for (ProductDTO p: dto.getListPorduct()) {
+        if (dto.getListPorduct().size() != 0) {
+            for (ProductDTO p : dto.getListPorduct()) {
                 Product product = productRepository.getById(p.getId());
                 ReservationProduct reservationProduct = new ReservationProduct();
                 reservationProduct.setReservation(reservationAdd);
@@ -186,7 +187,7 @@ public class ReservationServiceImpl implements ReservationService {
         }
         // set số chỗ còn trống trong phòng
         DiningRoom diningRoom = diningRoomRepository.findById(dto.getIdRoom()).get();
-        if(diningRoom.getNumberOfAvailable() == 0) {
+        if (diningRoom.getNumberOfAvailable() == 0) {
             diningRoom.setNumberOfAvailable(diningRoom.getMaximumOccupancy() - dto.getNumberOfPeopleBooked());
             diningRoomRepository.save(diningRoom);
         } else {
@@ -241,11 +242,11 @@ public class ReservationServiceImpl implements ReservationService {
 //    }
 
     @Override
-    public  String changePlaces(ChangePlacesDTO dto, Integer idResercation){
+    public String changePlaces(ChangePlacesDTO dto, Integer idResercation) {
         Reservation reservation = reservationRepository.findById(idResercation).get();
         //kiểm tra xem có đổi loại phòng ko
         int numberPeople = reservation.getNumberOfPeopleBooked();
-        if(reservation.getCategoryDiningRoom().getId() != dto.getIdCategoryDiningRoom()){
+        if (reservation.getCategoryDiningRoom().getId() != dto.getIdCategoryDiningRoom()) {
             reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
             reservationRepository.save(reservation);
         }
@@ -255,12 +256,12 @@ public class ReservationServiceImpl implements ReservationService {
         int count = 0;
         int idOldRoom = 0;
         for (TableDetail t : oldTableDetail) {
-            if(t.getDiningRoom().getId() != dto.getIdRoom()) {
+            if (t.getDiningRoom().getId() != dto.getIdRoom()) {
                 count++;
                 idOldRoom = t.getDiningRoom().getId();
             }
         }
-        if(count != 0) {
+        if (count != 0) {
             // set số chỗ còn trống trong phòng mới
             DiningRoom diningRoom = diningRoomRepository.findById(dto.getIdRoom()).get();
             diningRoom.setNumberOfAvailable(diningRoom.getNumberOfAvailable() - dto.getNumberOfPeopleBooked());
@@ -274,12 +275,12 @@ public class ReservationServiceImpl implements ReservationService {
 
         //kiểm tra xem có đổi bàn hay không
         List<Integer> listOldTable = new ArrayList<>();
-        for (TableDetail t: oldTableDetail) {
+        for (TableDetail t : oldTableDetail) {
             listOldTable.add(t.getDinnerTable().getId());
         }
         boolean areEqual = listOldTable.equals(dto.getIdTable());
 
-        if(areEqual) {
+        if (areEqual) {
             return "Check in thành công";
         }
         //cập nhật trạng thái cho các bàn cũ
@@ -310,12 +311,15 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         return "cập nhật thành công";
-    };
+    }
+
+    ;
+
     @Override
-    public  String changeProduct(ChangeProductDTO dto, Integer idResercation){
+    public String changeProduct(ChangeProductDTO dto, Integer idResercation) {
         Reservation reservation = reservationRepository.findById(idResercation).get();
         for (ProductDTO p : dto.getListPorduct()) {
-            if(reservationProductRepository.findByReservationAndProduct(reservation.getId(), p.getId()) != null) {
+            if (reservationProductRepository.findByReservationAndProduct(reservation.getId(), p.getId()) != null) {
                 ReservationProduct reservationProduct = reservationProductRepository.findByReservationAndProduct(reservation.getId(), p.getId());
                 reservationProduct.setQuantity(p.getQuantity());
                 reservationProductRepository.save(reservationProduct);
@@ -332,17 +336,23 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         reservation.setOriginalPrice(dto.getOriginalPrice());
-        reservation.setActualPrice((dto.getOriginalPrice() * reservation.getVoucher().getVoucherValue()) / 100);
+        if (reservation.getVoucher() != null) {
+            reservation.setActualPrice((dto.getOriginalPrice() * reservation.getVoucher().getVoucherValue()) / 100);
+        } else {
+            reservation.setActualPrice(dto.getOriginalPrice());
+        }
 //        reservation.setPriceToPay(dto.getPriceToPay());
         reservationRepository.save(reservation);
         return "Cập nhật thành công";
-    };
+    }
+
+    ;
 
     @Override
-    public String arrangeSeats(ChangePlacesDTO dto, Integer idResercation){
+    public String arrangeSeats(ChangePlacesDTO dto, Integer idResercation) {
         // set số chỗ còn trống trong phòng
         DiningRoom diningRoom = diningRoomRepository.findById(dto.getIdRoom()).get();
-        if(diningRoom.getNumberOfAvailable() == 0) {
+        if (diningRoom.getNumberOfAvailable() == 0) {
             diningRoom.setNumberOfAvailable(diningRoom.getMaximumOccupancy() - dto.getNumberOfPeopleBooked());
             diningRoomRepository.save(diningRoom);
         } else {
@@ -367,7 +377,9 @@ public class ReservationServiceImpl implements ReservationService {
             tableDetailRepository.save(tableDetail);
         }
         return "Cập nhật thành công";
-    };
+    }
+
+    ;
 
     @Override
     public String changeStatus(ChangeStatusDTO dto, Integer id) {
@@ -434,8 +446,8 @@ public class ReservationServiceImpl implements ReservationService {
         Page<Reservation> getList = reservationRepository.getReservationByUser(id, pageable);
         //Chuyển các entity thành các đối tượng Data Transfer Object(DTO) rồi trả về cho controller
         List<ReservationViewDTO> viewDTOS = getList.getContent().stream()
-                .map(this::convertToReservationViewDTO)
-                .collect(Collectors.toList());
+            .map(this::convertToReservationViewDTO)
+            .collect(Collectors.toList());
 
         return new PageImpl<>(viewDTOS, getList.getPageable(), getList.getTotalElements());
     }
