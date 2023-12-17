@@ -9,10 +9,7 @@ import com.poly.bookingapi.entity.ComboDetail;
 import com.poly.bookingapi.entity.ImageProduct;
 import com.poly.bookingapi.entity.Product;
 import com.poly.bookingapi.proxydto.ProductProxy;
-import com.poly.bookingapi.repository.CategoryProductRepository;
-import com.poly.bookingapi.repository.ComboDetailRepository;
-import com.poly.bookingapi.repository.ImageProductRepository;
-import com.poly.bookingapi.repository.ProductRepository;
+import com.poly.bookingapi.repository.*;
 import com.poly.bookingapi.service.ProductService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -44,6 +41,8 @@ public class ProductServiceImpl implements ProductService {
     ImageProductRepository imageProductRepository;
     @Autowired
     ComboDetailRepository detailRepository;
+    @Autowired
+    ProductStatusRepository statusRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -85,6 +84,13 @@ public class ProductServiceImpl implements ProductService {
             .map(this::convertToProductViewDTO)
             .collect(Collectors.toList());
 
+//        List<ProductViewDTO> viewDTOS = new ArrayList<>();
+//        for (Product p: productList.getContent()
+//             ) {
+//            ProductViewDTO dto = this.convertToProductViewDTO(p);
+//            viewDTOS.add(dto);
+//        }
+
         return new PageImpl<>(viewDTOS, productList.getPageable(), productList.getTotalElements());
     }
 
@@ -96,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
             dto.setDiscount(p.getDiscount().getDiscountValue());
         }
         dto.setId(p.getId());
-        dto.setImages(p.getListImage());
+//        dto.setImages(p.getListImage());
         dto.setIntroduce(p.getIntroduce());
         dto.setName(p.getNameProduct());
         dto.setPrice(p.getPrice());
@@ -116,7 +122,7 @@ public class ProductServiceImpl implements ProductService {
             dto.setDiscount(p.get().getDiscount().getDiscountValue());
         }
         dto.setId(p.get().getId());
-        dto.setImages(p.get().getListImage());
+//        dto.setImages(p.get().getListImage());
         dto.setIntroduce(p.get().getIntroduce());
         dto.setName(p.get().getNameProduct());
         dto.setPrice(p.get().getPrice());
@@ -180,6 +186,9 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(dto.getPrice());
         product.setCreatedAt(LocalDate.now());
         product.setUpdateAt(LocalDate.now());
+        if(statusRepository.findById(1).get() != null) {
+            product.setStatus(statusRepository.findById(1).get());
+        }
         try {
             Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", cloudName,

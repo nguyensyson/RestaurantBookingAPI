@@ -45,8 +45,8 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(authorize -> {
                 authorize
                     .requestMatchers("/api/auth/**", "/api/view/**").permitAll()
-                    .requestMatchers("/api/admin/**").permitAll()
-                    .requestMatchers("/api/user/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER")
+                    .requestMatchers("/api/admin/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER")
+                    .requestMatchers("/api/user/**").hasAnyAuthority("ROLE_USER")
                     .anyRequest().authenticated();
             })
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

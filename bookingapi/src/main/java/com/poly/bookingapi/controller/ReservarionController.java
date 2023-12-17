@@ -39,8 +39,8 @@ public class ReservarionController {
         return ResponseEntity.ok(reservationService.getReservationByUser(id, model));
     }
 
-    @GetMapping("/api/user/reservation/detail/{id}")
-    public ResponseEntity<Optional<Reservation>> detailReservation(@PathVariable("id") Integer id){
+    @GetMapping("/api/admin/reservation/detail/{id}")
+    public ResponseEntity<Reservation> detailReservation(@PathVariable("id") Integer id){
         return ResponseEntity.ok(reservationService.detailReservation(id));
     }
     //tạo bởi khách hàng

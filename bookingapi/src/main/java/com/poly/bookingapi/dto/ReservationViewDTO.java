@@ -1,6 +1,9 @@
 package com.poly.bookingapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.poly.bookingapi.entity.ProductStatus;
 import com.poly.bookingapi.entity.ReservationProduct;
+import com.poly.bookingapi.entity.ReservationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +11,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -21,9 +25,10 @@ public class ReservationViewDTO {
     private String sdt;
     private String fullname;
     private Integer numberOfPeopleBooked;
-    private LocalDate reservationDate;
+    private LocalDateTime reservationDate;
     private Integer idCategoryDiningRoom;
-    private Integer idStatus;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private ReservationStatus oderStatus;
 //    private Integer idClient;
 //    private Integer idVoucher;
 //    private LocalTime startTime;

@@ -20,7 +20,7 @@ public class ProductViewDTO {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private CategoryProduct category;
     private String avatar;
-    private List<ImageProduct> images;
+//    private List<ImageProduct> images;
     private String name;
     private Long price;
     private Integer discount;
