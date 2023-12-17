@@ -27,6 +27,7 @@ public class Reservation implements java.io.Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", referencedColumnName = "id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Client client;
 
     @Column(name = "fullname_client")
@@ -66,6 +67,7 @@ public class Reservation implements java.io.Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "voucher_id", referencedColumnName = "id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Voucher voucher;
 
     @Column(name = "upfront_price")
@@ -90,6 +92,7 @@ public class Reservation implements java.io.Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", referencedColumnName = "id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Admin updatedBy;
 
     @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY)

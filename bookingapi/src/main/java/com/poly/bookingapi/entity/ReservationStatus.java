@@ -33,7 +33,7 @@ public class ReservationStatus {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate updateAt;
 
-    @OneToMany(mappedBy = "status", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "status", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Reservation> listReservation;
 }

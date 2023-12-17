@@ -25,7 +25,7 @@ public class CategoryProductController {
     }
 
     @PostMapping("api/admin/category-product/add")
-    public ResponseEntity<String> addCategory(@RequestBody CategoryViewDTO dto) {
+    public ResponseEntity<String> addCategory(@ModelAttribute CategoryViewDTO dto) {
         return ResponseEntity.ok(categoryService.addCategory(dto));
     }
 

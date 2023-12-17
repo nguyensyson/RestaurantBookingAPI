@@ -18,7 +18,7 @@ ReservationService {
 //    Integer countReservation();
 //    void addVoucher(Reservation reservation,Integer voucher);
     String changeStatus(ChangeStatusDTO dto, Integer id);
-    Optional<Reservation> detailReservation(Integer id);
+    Reservation detailReservation(Integer id);
     String updateByClient(ReservationAddDTO reservationAddDTO, Integer id);
     String updateByAdmin(ReservationUpdateDTO reservationAddDTO, Integer id);
     Page<ReservationViewDTO> getReservationByUser(Integer id, ReservationSortRequest model);

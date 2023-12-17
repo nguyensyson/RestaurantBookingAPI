@@ -72,12 +72,12 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationViewDTO convertToReservationViewDTO(Reservation reservation) {
         ReservationViewDTO viewDTO = new ReservationViewDTO();
         viewDTO.setId(reservation.getId());
-        viewDTO.setReservationDate(reservation.getReservationDate());
+        viewDTO.setReservationDate(reservation.getReservationDate().atTime(reservation.getStartTime()));
         viewDTO.setCreatedAt(reservation.getCreatedAt());
         viewDTO.setSdt(reservation.getSdt());
         viewDTO.setFullname(reservation.getFullNameClient());
         if (reservation.getStatus().getId() != null) {
-            viewDTO.setIdStatus(reservation.getStatus().getId());
+            viewDTO.setOderStatus(reservation.getStatus());
         }
         if (reservation.getCategoryDiningRoom().getId() != null) {
             viewDTO.setIdCategoryDiningRoom(reservation.getCategoryDiningRoom().getId());
@@ -160,6 +160,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setDelayTime(dto.getDateTime().toLocalTime().plusMinutes(15));
         // thời gian kết thúc của khách dự trù là 2 tiếng
         reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
+        
         reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
         if (clientRepository.getBySDT(dto.getSdt()) != null) {
             reservation.setClient(clientRepository.getBySDT(dto.getSdt()));
@@ -391,8 +392,8 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Optional<Reservation> detailReservation(Integer id) {
-        Optional<Reservation> optionalReservation = reservationRepository.findById(id);
+    public Reservation detailReservation(Integer id) {
+        Reservation optionalReservation = reservationRepository.findById(id).get();
         return optionalReservation;
     }
 

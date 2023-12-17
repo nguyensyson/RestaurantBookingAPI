@@ -27,13 +27,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
         "WHERE (:name is null or p.nameProduct LIKE %:name% ) AND p.category.id = 1")
     Page<Product> searchComboByName(String name, Pageable pageable);
 
-    @Query("select p.id as id, " +
-        "p.nameProduct as name," +
-        "p.price as price," +
-        "coalesce(sum(rp.quantity),0) as quantity, " +
-        "(case when count(distinct rp.id) > 0 then true else false end ) as isOrdered from " +
-        "Product p left join ReservationProduct rp ON (p.id = rp.product.id and rp.reservation.id = :id) " +
-        "group by p.id " +
-        "order by p.id desc")
+    @Query("SELECT p.id AS id, " +
+        "p.nameProduct AS name," +
+        "p.price AS price," +
+        "COALESCE(SUM(rp.quantity),0) AS quantity, " +
+        "(CASE WHEN COUNT(DISTINCT rp.id) > 0 THEN TRUE ELSE FALSE END ) AS isOrdered FROM " +
+        "Product p LEFT JOIN ReservationProduct rp ON (p.id = rp.product.id AND rp.reservation.id = :id) " +
+        "GROUP BY p.id " +
+        "ORDER BY (CASE WHEN COUNT(DISTINCT rp.id) > 0 THEN TRUE ELSE FALSE END ) DESC")
     List<ProductProxy> getAll(Integer id);
 }
