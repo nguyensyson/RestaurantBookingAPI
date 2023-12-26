@@ -16,6 +16,6 @@ public interface DinnerTableService {
     DinnerTable update(DinnerTableDTO dinnerTableDTO,Integer id);
     DinnerTable delete(Integer id);
 
-    List<DinnerTableProxy> getAllByDiningRoomId(Integer id);
+    List<DinnerTableProxy> getAllByDiningRoomId(Integer id, Integer idRoom);
 
 }

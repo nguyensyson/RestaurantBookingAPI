@@ -12,4 +12,5 @@ public interface DinnerTableProxy {
     String getTableCode();
     Integer getNumberOfSeats();
     Integer getStatus();
+    Boolean getIsOrdered();
 }

@@ -38,8 +38,9 @@ public class DinnerTableController {
         return ResponseEntity.ok(dinnerTableService.delete(id));
     }
 
-    @GetMapping("api/view/dinner-table/findByDinningRoomId/{id}")
-    public List<DinnerTableProxy> findByDinningRoomId(@PathVariable Integer id) {
-        return dinnerTableService.getAllByDiningRoomId(id);
+    @GetMapping("api/view/dinner-table/findByDinningRoomId/{id}/{idRoom}")
+    public List<DinnerTableProxy> findByDinningRoomId(@PathVariable Integer id,
+                                                      @PathVariable Integer idRoom) {
+        return dinnerTableService.getAllByDiningRoomId(id, idRoom);
     }
 }

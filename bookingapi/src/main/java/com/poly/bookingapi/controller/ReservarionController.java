@@ -40,7 +40,7 @@ public class ReservarionController {
     }
 
     @GetMapping("/api/admin/reservation/detail/{id}")
-    public ResponseEntity<Reservation> detailReservation(@PathVariable("id") Integer id){
+    public ResponseEntity<ReservationViewDTO> detailReservation(@PathVariable("id") Integer id){
         return ResponseEntity.ok(reservationService.detailReservation(id));
     }
     //tạo bởi khách hàng

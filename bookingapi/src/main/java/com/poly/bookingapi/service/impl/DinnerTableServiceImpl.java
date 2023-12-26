@@ -96,7 +96,7 @@ public class DinnerTableServiceImpl implements DinnerTableService {
      *  </p>
      */
     @Override
-    public List<DinnerTableProxy> getAllByDiningRoomId(Integer id) {
-        return dinnerTableRepository.getAllByDiningRoomId(id);
+    public List<DinnerTableProxy> getAllByDiningRoomId(Integer id, Integer idRoom) {
+        return dinnerTableRepository.getAllDESC(id, idRoom);
     }
 }
