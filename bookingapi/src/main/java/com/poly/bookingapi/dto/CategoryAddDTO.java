@@ -13,9 +13,8 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryViewDTO {
+public class CategoryAddDTO {
 
     private Integer id;
-    private MultipartFile image;
     private String nameCategory;
 }

@@ -2,6 +2,7 @@ package com.poly.bookingapi.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.poly.bookingapi.config.ImageUploader;
 import com.poly.bookingapi.constant.ProductConst;
 import com.poly.bookingapi.dto.*;
 import com.poly.bookingapi.entity.CategoryProduct;
@@ -189,34 +190,15 @@ public class ProductServiceImpl implements ProductService {
         if(statusRepository.findById(1).get() != null) {
             product.setStatus(statusRepository.findById(1).get());
         }
+        Product productAdd = productRepository.save(product);
         try {
-            Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", cloudName,
-                "api_key", apiKey,
-                "api_secret", apiSecret));
-
-            // Upload file lên Cloudinary
-            Map uploadResult = cloudinary.uploader().upload(dto.getImages().getBytes(), ObjectUtils.asMap(
-                "folder", "BeesMeal"
-            ));
-
-            // Lấy URL của ảnh sau khi upload thành công
-            String imageUrl = (String) uploadResult.get("secure_url");
-
-            // Trả về URL của ảnh đã upload để sử dụng trong frontend hoặc để lưu vào cơ sở dữ liệu
-            product.setAvatar(imageUrl);
-
-            Product productAdd = productRepository.save(product);
-            ImageProduct imageProduct = new ImageProduct();
-            imageProduct.setProduct(productAdd);
-            imageProduct.setImages(imageUrl);
-            imageProduct.setCreatedAt(LocalDate.now());
-            imageProduct.setUpdateAt(LocalDate.now());
-            imageProductRepository.save(imageProduct);
-            return "add thành công";
+            byte[] imageData = dto.getImages().getBytes();
+            Thread thread = new Thread(new ImageUploader(imageData, productAdd.getId(), productRepository));
+            thread.start();
         } catch (IOException e) {
-            throw new RuntimeException("add thất bại");
+            e.printStackTrace();
         }
+        return "Add thành công";
     }
 
     @Override
@@ -227,33 +209,21 @@ public class ProductServiceImpl implements ProductService {
         product.get().setIntroduce(dto.getIntroduce());
         product.get().setPrice(dto.getPrice());
         product.get().setUpdateAt(LocalDate.now());
+        Product productAdd = productRepository.save(product.get());
         try {
-            Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", cloudName,
-                "api_key", apiKey,
-                "api_secret", apiSecret));
-
-            // Upload file lên Cloudinary
-            Map uploadResult = cloudinary.uploader().upload(dto.getImages().getBytes(), ObjectUtils.asMap(
-                "folder", "BeesMeal"
-            ));
-
-            // Lấy URL của ảnh sau khi upload thành công
-            String imageUrl = (String) uploadResult.get("secure_url");
-
-            // Trả về URL của ảnh đã upload để sử dụng trong frontend hoặc để lưu vào cơ sở dữ liệu
-            product.get().setAvatar(imageUrl);
-
-            Product productAdd = productRepository.save(product.get());
-            ImageProduct imageProduct = new ImageProduct();
-            imageProduct.setProduct(productAdd);
-            imageProduct.setImages(imageUrl);
-            imageProduct.setCreatedAt(LocalDate.now());
-            imageProduct.setUpdateAt(LocalDate.now());
-            ImageProduct imageProduct1 = imageProductRepository.save(imageProduct);
+            byte[] imageData = dto.getImages().getBytes();
+            Thread thread = new Thread(new ImageUploader(imageData, productAdd.getId(), productRepository));
+            thread.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+//            ImageProduct imageProduct = new ImageProduct();
+//            imageProduct.setProduct(productAdd);
+//            imageProduct.setImages(imageUrl);
+//            imageProduct.setCreatedAt(LocalDate.now());
+//            imageProduct.setUpdateAt(LocalDate.now());
+//            ImageProduct imageProduct1 = imageProductRepository.save(imageProduct);
 
         return "update thành công";
     }

@@ -1,13 +1,15 @@
 package com.poly.bookingapi.service;
 
-import com.poly.bookingapi.dto.CategoryViewDTO;
+import com.poly.bookingapi.dto.CategoryAddDTO;
+import com.poly.bookingapi.dto.CategoryProductRequest;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface CategoryProductService {
 
-    List<CategoryViewDTO> getAll();
-    CategoryViewDTO getByID(Integer id);
-    String addCategory(CategoryViewDTO dto);
-    String updateCategory(CategoryViewDTO dto, Integer id);
+    Page<CategoryAddDTO> getAll(CategoryProductRequest request);
+    CategoryAddDTO getByID(Integer id);
+    String addCategory(CategoryAddDTO dto);
+    String updateCategory(CategoryAddDTO dto, Integer id);
 }

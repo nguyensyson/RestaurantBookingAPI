@@ -1,7 +1,6 @@
 package com.poly.bookingapi.controller;
 
 import com.poly.bookingapi.dto.CategoryDiningRoomDTO;
-import com.poly.bookingapi.dto.CategoryViewDTO;
 import com.poly.bookingapi.service.CategoryDiningRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
