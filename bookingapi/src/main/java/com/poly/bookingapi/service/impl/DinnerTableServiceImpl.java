@@ -30,32 +30,20 @@ public class DinnerTableServiceImpl implements DinnerTableService {
     private DinnerTableRepository dinnerTableRepository;
 
     @Override
-    public Page<DinnerTableDTO> getAll(DinnerTableRequest model) {
-        Pageable pageable = PageRequest.of(model.getPage(), model.getSize());
-        Page<DinnerTable> list = dinnerTableRepository.findAll(pageable);
-        //Chuyển các entity thành các đối tượng Data Transfer Object(DTO) rồi trả về cho controller
-        List<DinnerTableDTO> viewDTOS = list.getContent().stream()
-                .map(this::convertToDinnerTableDTO)
-                .collect(Collectors.toList());
+    public List<DinnerTable> getAll() {return dinnerTableRepository.getAll(); }
 
-        return new PageImpl<>(viewDTOS, list.getPageable(), list.getTotalElements());
-    }
-
-    private DinnerTableDTO convertToDinnerTableDTO(DinnerTable dinnerTable) {
-        DinnerTableDTO dto = new DinnerTableDTO();
-        dto.setId(dinnerTable.getId());
-        dto.setStatus(dinnerTable.getStatus());
-        dto.setTableCode(dinnerTable.getTableCode());
-        dto.setNumberOfSeats(dinnerTable.getNumberOfSeats());
-        return dto;
-    }
-
+    @Override
+    public DinnerTable detail(Integer id){
+        return dinnerTableRepository.findById(id).get();
+    };
 
     @Override
     public DinnerTable add(DinnerTableDTO dinnerTableDTO) {
         DinnerTable dinnerTable = new DinnerTable();
         dinnerTable.setDiningRoom(DiningRoom.builder().id(dinnerTableDTO.getIdRoom()).build());
         dinnerTable.setNumberOfSeats(dinnerTableDTO.getNumberOfSeats());
+        List<DinnerTable> list = dinnerTableRepository.findAll();
+        dinnerTable.setTableCode("B" + String.format("%03d", list.size() + 1));
         dinnerTable.setStatus(1);
         dinnerTable.setCreatedAt(LocalDate.now());
         return dinnerTableRepository.save(dinnerTable);
@@ -67,7 +55,6 @@ public class DinnerTableServiceImpl implements DinnerTableService {
         return optional.map(dinnerTable -> {
             dinnerTable.setDiningRoom(DiningRoom.builder().id(dinnerTableDTO.getIdRoom()).build());
             dinnerTable.setNumberOfSeats(dinnerTableDTO.getNumberOfSeats());
-            dinnerTable.setStatus(dinnerTableDTO.getStatus());
             dinnerTable.setUpdateAt(LocalDate.now());
             return dinnerTableRepository.save(dinnerTable);
         }).orElse(null);
@@ -88,7 +75,7 @@ public class DinnerTableServiceImpl implements DinnerTableService {
      * @return danh sách các bàn ăn thuộc DiningRoom có id truyền vào
      * @see com.poly.bookingapi.repository.DinnerTableRepository#getAllByDiningRoomId(Integer)
      * @see com.poly.bookingapi.proxydto.DinnerTableProxy
-     * @see com.poly.bookingapi.controller.DinnerTableController#getAllDinnerTable(DinnerTableRequest)
+     * @see com.poly.bookingapi.controller.DinnerTableController#getAllDinnerTable()
      *  <p>
      *      Lấy danh sách các bàn ăn thuộc DiningRoom có id truyền vào
      *      Sử dụng DinnerTableProxy để lấy thông tin DiningRoom của bàn ăn
@@ -98,5 +85,10 @@ public class DinnerTableServiceImpl implements DinnerTableService {
     @Override
     public List<DinnerTableProxy> getAllByDiningRoomId(Integer id, Integer idRoom) {
         return dinnerTableRepository.getAllDESC(id, idRoom);
+    }
+
+    @Override
+    public List<DinnerTableProxy> getAllByRoomId(Integer id){
+        return dinnerTableRepository.getAllByDiningRoomId(id);
     }
 }

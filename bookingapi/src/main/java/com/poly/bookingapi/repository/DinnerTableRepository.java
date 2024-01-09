@@ -24,4 +24,12 @@ public interface DinnerTableRepository extends JpaRepository<DinnerTable, Intege
             "GROUP BY d.id " +
             "ORDER BY (CASE WHEN COUNT(DISTINCT t.id) > 0 THEN TRUE ELSE FALSE END ) DESC")
     List<DinnerTableProxy> getAllDESC(@Param("id") Integer id, @Param("idRoom") Integer idRoom);
+
+    @Query("SELECT t FROM DinnerTable t ORDER BY t.status DESC")
+    List<DinnerTable> getAll();
+
+    @Query("SELECT t " +
+            "FROM DinnerTable t INNER JOIN TableDetail td ON t.id = td.dinnerTable.id " +
+            "WHERE td.reservation.id = :id")
+    List<DinnerTable> getByReservation(@Param("id") Integer id);
 }

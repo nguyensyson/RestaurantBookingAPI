@@ -11,11 +11,12 @@ import java.util.List;
 
 public interface DinnerTableService {
 
-    Page<DinnerTableDTO> getAll(DinnerTableRequest model);
+    List<DinnerTable> getAll();
     DinnerTable add(DinnerTableDTO dinnerTableDTO);
     DinnerTable update(DinnerTableDTO dinnerTableDTO,Integer id);
     DinnerTable delete(Integer id);
+    DinnerTable detail(Integer id);
 
     List<DinnerTableProxy> getAllByDiningRoomId(Integer id, Integer idRoom);
-
+    List<DinnerTableProxy> getAllByRoomId(Integer id);
 }

@@ -25,4 +25,5 @@ ReservationService {
     String changePlaces(ChangePlacesDTO dto, Integer idResercation);
     String changeProduct(ChangeProductDTO dto, Integer idResercation);
     String arrangeSeats(ChangePlacesDTO dto, Integer idResercation);
+    Invoice invoice(Integer id);
 }

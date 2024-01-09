@@ -42,10 +42,4 @@ public class DiningRoom {
     @OneToMany(mappedBy = "diningRoom", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<TableDetail> listTableDetail;
-
-    public DiningRoomDTO loadData (DiningRoomDTO diningRoomDTO){
-        diningRoomDTO.setMaximumOccupancy(maximumOccupancy);
-        diningRoomDTO.setNumberOfAvailable(numberOfAvailable);
-        return diningRoomDTO;
-    }
 }

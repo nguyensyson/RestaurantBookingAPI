@@ -72,7 +72,9 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationViewDTO convertToReservationViewDTO(Reservation reservation) {
         ReservationViewDTO viewDTO = new ReservationViewDTO();
         viewDTO.setId(reservation.getId());
-        viewDTO.setReservationDate(reservation.getReservationDate().atTime(reservation.getStartTime()));
+        if(reservation.getReservationDate() != null) {
+            viewDTO.setReservationDate(reservation.getReservationDate().atTime(reservation.getStartTime()));
+        }
         viewDTO.setCreatedAt(reservation.getCreatedAt());
         viewDTO.setSdt(reservation.getSdt());
         viewDTO.setFullname(reservation.getFullNameClient());
@@ -161,21 +163,31 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setSdt(dto.getSdt());
         reservation.setFullNameClient(dto.getFullname());
         reservation.setNumberOfPeopleBooked(dto.getNumberOfPeopleBooked());
-        reservation.setReservationDate(dto.getDateTime().toLocalDate());
-        reservation.setStartTime(dto.getDateTime().toLocalTime());
-        // thời gian delay của khách mặc định cộng thêm 15p
-        reservation.setDelayTime(dto.getDateTime().toLocalTime().plusMinutes(15));
-        // thời gian kết thúc của khách dự trù là 2 tiếng
-        reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
+        if(dto.getDateTime() != null) {
+            reservation.setReservationDate(dto.getDateTime().toLocalDate());
+            reservation.setStartTime(dto.getDateTime().toLocalTime());
+            // thời gian delay của khách mặc định cộng thêm 15p
+            reservation.setDelayTime(dto.getDateTime().toLocalTime().plusMinutes(15));
+            // thời gian kết thúc của khách dự trù là 2 tiếng
+            reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
+        }
 
-        reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
+        if(dto.getIdCategoryDiningRoom() != null) {
+            reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
+        }
         if (clientRepository.getBySDT(dto.getSdt()) != null) {
             reservation.setClient(clientRepository.getBySDT(dto.getSdt()));
         }
-        reservation.setUpfrontPrice(dto.getUpfrontPrice());
-        reservation.setOriginalPrice(dto.getOriginalPrice());
-        reservation.setActualPrice(dto.getActualPrice());
-        reservation.setPriceToPay(dto.getPriceToPay());
+        long price = 0;
+        if (dto.getListPorduct().size() != 0) {
+            for (ProductDTO p : dto.getListPorduct()) {
+                price = price + (p.getPrice()*p.getQuantity());
+            }
+        }
+        reservation.setUpfrontPrice(Long.valueOf(0));
+        reservation.setOriginalPrice(price);
+        reservation.setActualPrice(price);
+        reservation.setPriceToPay(price);
         reservation.setUpdateAt(LocalDate.now());
         reservation.setCreatedAt(LocalDate.now());
         reservation.setStatus(reservationStatusRepository.findById(2).get());
@@ -408,7 +420,10 @@ public class ReservationServiceImpl implements ReservationService {
         dto.setIdCategoryDiningRoom(optionalReservation.getCategoryDiningRoom().getId());
         dto.setOderStatus(optionalReservation.getStatus());
         dto.setNumberOfPeopleBooked(optionalReservation.getNumberOfPeopleBooked());
-        dto.setReservationDate(optionalReservation.getReservationDate().atTime(optionalReservation.getStartTime()));
+        if(optionalReservation.getReservationDate() != null) {
+            dto.setReservationDate(optionalReservation.getReservationDate().atTime(optionalReservation.getStartTime()));
+        }
+
         List<DiningRoom> rooms = diningRoomRepository.getAllDESC(id, optionalReservation.getCategoryDiningRoom().getId());
         dto.setDiningRoom(rooms);
         dto.setDinnerTables(dinnerTableRepository.getAllDESC(id, rooms.get(0).getId()));
@@ -474,4 +489,44 @@ public class ReservationServiceImpl implements ReservationService {
 
         return new PageImpl<>(viewDTOS, getList.getPageable(), getList.getTotalElements());
     }
+
+    @Override
+    public Invoice invoice(Integer id){
+        Invoice invoice = new Invoice();
+        Reservation optionalReservation = reservationRepository.findById(id).orElseThrow();
+        invoice.setId(optionalReservation.getId());
+        invoice.setSdt(optionalReservation.getSdt());
+        invoice.setFullname(optionalReservation.getFullNameClient());
+        invoice.setCategoryDiningRoom(optionalReservation.getCategoryDiningRoom().getTitle());
+//        invoice.setOderStatus(optionalReservation.getStatus());
+        invoice.setNumberOfPeopleBooked(optionalReservation.getNumberOfPeopleBooked());
+        if(optionalReservation.getReservationDate() != null) {
+            invoice.setReservationDate(optionalReservation.getReservationDate().atTime(optionalReservation.getStartTime()));
+        }
+        if(diningRoomRepository.getByReservation(id) != null) {
+            invoice.setDiningRoom(diningRoomRepository.getByReservation(id).getName());
+        }
+        if(dinnerTableRepository.getByReservation(id).size() != 0) {
+            List<DinnerTable> list = dinnerTableRepository.getByReservation(id);
+            String table = "";
+            for (int i = 0; i < list.size(); i++) {
+                table += list.get(i).getTableCode();
+
+                if (i < list.size() - 1) {
+                    table += ", ";
+                }
+            }
+            invoice.setDiningTable(table);
+        }
+        invoice.setUpfrontPrice(optionalReservation.getUpfrontPrice());
+        invoice.setOriginalPrice(optionalReservation.getOriginalPrice());
+        invoice.setActualPrice(optionalReservation.getActualPrice());
+        invoice.setPriceToPay(optionalReservation.getPriceToPay());
+        if(productRepository.getByReservation(id) != null) {
+            invoice.setProducts(productRepository.getByReservation(id));
+        }
+        System.out.print("oke");
+        return invoice;
+    };
+
 }

@@ -27,17 +27,7 @@ public class DiningRoomServiceImpl implements DiningRoomService {
     private DinnerTableRepository dinnerTableRepository;
 
     @Override
-    public List<DiningRoomDTO> getAll() {
-        List<DiningRoom> list = diningRoomRepository.findAll();
-
-        List<DiningRoomDTO> newList = new ArrayList<>();
-        for (DiningRoom dining : list) {
-            DiningRoomDTO diningRoomDTO = new DiningRoomDTO();
-            DiningRoomDTO loadDining = dining.loadData(diningRoomDTO);
-            newList.add(loadDining);
-        }
-        return newList;
-    }
+    public List<DiningRoom> getAll() { return diningRoomRepository.findAll(); }
 
     @Override
     public List<DiningRoom> getByIdCategory(Integer id){
@@ -50,14 +40,10 @@ public class DiningRoomServiceImpl implements DiningRoomService {
         diningRoom.setCategory(CategoryDiningRoom.builder().id(diningRoomDTO.getIdCategoryDining()).build());
         diningRoom.setMaximumOccupancy(diningRoomDTO.getMaximumOccupancy());
         diningRoom.setNumberOfAvailable(diningRoomDTO.getMaximumOccupancy());
+        List<DiningRoom> list = diningRoomRepository.findAll();
+        diningRoom.setName("P" + String.format("%03d", list.size() + 1));
         diningRoom.setCreatedAt(LocalDate.now());
         diningRoom.setUpdateAt(LocalDate.now());
-//        for (DinnerTableDTO list : diningRoomDTO.getListDinnerTable()) {
-//            list.setDiningRoom(diningRoomRepository.save(diningRoom));
-//            DinnerTable dinnerTable = dinnerTableRepository.getById(list.getId());
-//            dinnerTable.setDiningRoom(list.getDiningRoom());
-//            dinnerTableRepository.save(dinnerTable);
-//        }
         return diningRoomRepository.save(diningRoom);
     }
 
@@ -65,16 +51,13 @@ public class DiningRoomServiceImpl implements DiningRoomService {
     @Override
     public DiningRoom update(DiningRoomDTO diningRoomDTO, Integer id) {
         DiningRoom diningRoom = diningRoomRepository.findById(id).orElseThrow(() -> new NotFoundException("Not Found diningRoom"));
+        diningRoom.setCategory(CategoryDiningRoom.builder().id(diningRoomDTO.getIdCategoryDining()).build());
         diningRoom.setMaximumOccupancy(diningRoomDTO.getMaximumOccupancy());
-        diningRoom.setNumberOfAvailable(diningRoomDTO.getMaximumOccupancy());
         diningRoom.setUpdateAt(LocalDate.now());
-//        for (DinnerTableDTO list : diningRoomDTO.getListDinnerTable()) {
-//            list.setDiningRoom(diningRoomRepository.save(diningRoom));
-//            DinnerTable dinnerTable = dinnerTableRepository.getById(list.getId());
-//            dinnerTable.setDiningRoom(list.getDiningRoom());
-//            dinnerTableRepository.save(dinnerTable);
-//        }
        return diningRoomRepository.save(diningRoom);
     }
+
+    @Override
+    public DiningRoom detail(Integer id) {return diningRoomRepository.findById(id).get();};
 
 }

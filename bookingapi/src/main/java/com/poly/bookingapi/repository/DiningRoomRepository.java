@@ -26,4 +26,9 @@ public interface DiningRoomRepository extends JpaRepository<DiningRoom, Integer>
             "GROUP BY d.id " +
             "ORDER BY (CASE WHEN COUNT(DISTINCT t.id) > 0 THEN TRUE ELSE FALSE END ) DESC")
     List<DiningRoom> getAllDESC(@Param("id") Integer id,@Param("idcategory") Integer idcategory);
+
+    @Query("SELECT d " +
+            "FROM DiningRoom d INNER JOIN TableDetail t ON d.id = t.diningRoom.id " +
+            "WHERE t.reservation.id = :id ")
+    DiningRoom getByReservation(@Param("id") Integer id);
 }

@@ -36,4 +36,14 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
         "GROUP BY p.id " +
         "ORDER BY (CASE WHEN COUNT(DISTINCT rp.id) > 0 THEN TRUE ELSE FALSE END ) DESC")
     List<ProductProxy> getAll(Integer id);
+
+    @Query("SELECT p.id AS id, " +
+            "p.nameProduct AS name," +
+            "p.price AS price," +
+            "COALESCE(SUM(rp.quantity),0) AS quantity, " +
+            "(CASE WHEN COUNT(DISTINCT rp.id) > 0 THEN TRUE ELSE FALSE END ) AS isOrdered FROM " +
+            "Product p INNER JOIN ReservationProduct rp ON p.id = rp.product.id AND rp.reservation.id = :id " +
+            "GROUP BY p.id " +
+            "ORDER BY (CASE WHEN COUNT(DISTINCT rp.id) > 0 THEN TRUE ELSE FALSE END ) DESC")
+    List<ProductProxy> getByReservation(Integer id);
 }
