@@ -20,18 +20,18 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
 
     @Query("SELECT p " +
             "FROM Reservation p " +
-            "WHERE p.client.id = :id order by p.id desc")
+            "WHERE p.client.id = :id order by p.updateAt DESC")
     Page<Reservation> getReservationByUser(@Param("id") Integer id, Pageable pageable);
 
     @Query("SELECT p " +
             "FROM Reservation p " +
-            "order by p.id desc")
+            "order by p.updateAt DESC")
     Page<Reservation> getAll(Pageable pageable);
 
     Reservation getByClient(Client client);
 
     @Query("SELECT p " +
             "FROM Reservation p " +
-            "WHERE p.status.id = :id order by p.id desc")
+            "WHERE p.status.id = :id order by p.updateAt DESC")
     Page<Reservation> getByStatus(@Param("id") Integer id, Pageable pageable);
 }

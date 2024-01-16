@@ -1,7 +1,10 @@
 package com.poly.bookingapi.controller;
 
+import com.poly.bookingapi.dto.ChangeProductDTO;
 import com.poly.bookingapi.dto.ComboAddDTO;
 import com.poly.bookingapi.dto.ProductAddDTO;
+import com.poly.bookingapi.dto.ProductDTO;
+import com.poly.bookingapi.entity.Product;
 import com.poly.bookingapi.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +28,15 @@ public class ProductManagerController {
     }
 
     @PostMapping("/combo/add")
-    public ResponseEntity<String> addComboProduct(@ModelAttribute ComboAddDTO dto) {
+    public ResponseEntity<ProductDTO> addComboProduct(@ModelAttribute ComboAddDTO dto) {
         return ResponseEntity.ok(productService.addCombo(dto));
     }
+
+    @PutMapping("/combo/changeProduct/{id}")
+    public ResponseEntity<String> changeProduct(@RequestBody ChangeProductDTO dto, @PathVariable Integer id) {
+        return ResponseEntity.ok(productService.changeProduct(dto, id));
+    }
+
 
     @PutMapping("/combo/update/{id}")
     public ResponseEntity<String> updateComboProduct(@ModelAttribute ComboAddDTO dto, @PathVariable Integer id) {

@@ -34,6 +34,9 @@ public class ComboDetail {
     @Column(name = "price")
     private Long price;
 
+    @Column(name = "quantity")
+    private Integer quantity;
+
     @Column(name = "created_at")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate createdAt;

@@ -5,10 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import com.poly.bookingapi.config.ImageUploader;
 import com.poly.bookingapi.constant.ProductConst;
 import com.poly.bookingapi.dto.*;
-import com.poly.bookingapi.entity.CategoryProduct;
-import com.poly.bookingapi.entity.ComboDetail;
-import com.poly.bookingapi.entity.ImageProduct;
-import com.poly.bookingapi.entity.Product;
+import com.poly.bookingapi.entity.*;
 import com.poly.bookingapi.proxydto.ProductProxy;
 import com.poly.bookingapi.repository.*;
 import com.poly.bookingapi.service.ProductService;
@@ -136,15 +133,12 @@ public class ProductServiceImpl implements ProductService {
     private ComboViewDTO convertToComboViewDTO(Product p) {
         ComboViewDTO dto = new ComboViewDTO();
         dto.setAvatar(p.getAvatar());
-        dto.setCategory(p.getCategory());
-        dto.setDiscount(p.getDiscount().getDiscountValue());
         dto.setId(p.getId());
-        dto.setImages(p.getListImage());
         dto.setIntroduce(p.getIntroduce());
         dto.setName(p.getNameProduct());
         dto.setPrice(p.getPrice());
+        dto.setListItem(productRepository.getProductByCombo(p.getId()));
         dto.setStatus(p.getStatus().getId());
-        dto.setListItem(p.getListitem());
         return dto;
     }
 
@@ -165,15 +159,17 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> p = productRepository.findById(id);
         ComboViewDTO dto = new ComboViewDTO();
         dto.setAvatar(p.get().getAvatar());
-        dto.setCategory(p.get().getCategory());
-        dto.setDiscount(p.get().getDiscount().getDiscountValue());
         dto.setId(p.get().getId());
-        dto.setImages(p.get().getListImage());
         dto.setIntroduce(p.get().getIntroduce());
         dto.setName(p.get().getNameProduct());
         dto.setPrice(p.get().getPrice());
-        dto.setStatus(p.get().getStatus().getId());
-        dto.setListItem(p.get().getListitem());
+        List<ProductProxy> list = productRepository.getProductByCombo(id);
+        for (int i = list.size() - 1; i >= 0; i--) {
+            if(productRepository.findById(list.get(i).getId()).get().getCategory().getId() == 1) {
+                list.remove(i);
+            }
+        }
+        dto.setListItem(list);
         return dto;
     }
 
@@ -208,6 +204,7 @@ public class ProductServiceImpl implements ProductService {
         product.get().setNameProduct(dto.getName());
         product.get().setIntroduce(dto.getIntroduce());
         product.get().setPrice(dto.getPrice());
+        product.get().setStatus(statusRepository.findById(dto.getStatus()).get());
         product.get().setUpdateAt(LocalDate.now());
         Product productAdd = productRepository.save(product.get());
         try {
@@ -229,114 +226,90 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public String addCombo(ComboAddDTO dto) {
-        try {
+    public ProductDTO addCombo(ComboAddDTO dto) {
             Product combo = new Product();
-            combo.setCategory(categoryProductRepository.findById(1).get());
+            combo.setCategory(categoryProductRepository.findById(1).orElseThrow());
             combo.setNameProduct(dto.getName());
             combo.setIntroduce(dto.getIntroduce());
-
-            Long sum = Long.parseLong("0");
-            for (Product p : dto.getListItem()) {
-                sum = sum + p.getPrice();
-            }
-            combo.setPrice(sum);
             combo.setCreatedAt(LocalDate.now());
             combo.setUpdateAt(LocalDate.now());
-
-            Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", cloudName,
-                "api_key", apiKey,
-                "api_secret", apiSecret));
-            // Upload file lên Cloudinary
-            Map uploadResult = cloudinary.uploader().upload(dto.getAvatar().getBytes(), ObjectUtils.asMap(
-                "folder", "BeesMeal"
-            ));
-            // Lấy URL của ảnh sau khi upload thành công
-            String imageUrl = (String) uploadResult.get("secure_url");
-            // Trả về URL của ảnh đã upload để sử dụng trong frontend hoặc để lưu vào cơ sở dữ liệu
-            combo.setAvatar(imageUrl);
-
-            Product comboAdd = productRepository.save(combo);
-
-            for (Product p : dto.getListItem()) {
-                ComboDetail detail = new ComboDetail();
-                detail.setCombo(comboAdd);
-                detail.setItem(p);
-                detail.setNameProduct(p.getNameProduct());
-                detail.setPrice(p.getPrice());
-                detail.setCreatedAt(LocalDate.now());
-                detail.setUpdateAt(LocalDate.now());
-                ComboDetail detail1 = detailRepository.save(detail);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(statusRepository.findById(1).get() != null) {
+            combo.setStatus(statusRepository.findById(1).get());
         }
-
-        return "add thành công";
+            Product comboAdd = productRepository.save(combo);
+        if(dto.getAvatar().isPresent()) {
+            try {
+                byte[] imageData = dto.getAvatar().orElse(null).getBytes();
+                Thread thread = new Thread(new ImageUploader(imageData, comboAdd.getId(), productRepository));
+                thread.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return new ProductDTO(comboAdd.getId(), comboAdd.getNameProduct(), comboAdd.getPrice(), 0);
     }
 
     @Override
     public String updateCombo(ComboAddDTO dto, Integer id) {
-        try {
-
             Optional<Product> combo = productRepository.findById(id);
-            long sum = 0;
-            for (Product p : dto.getListItem()) {
-                sum = sum + p.getPrice();
-            }
-            combo.get().setPrice(sum);
             combo.get().setUpdateAt(LocalDate.now());
             combo.get().setNameProduct(dto.getName());
             combo.get().setIntroduce(dto.getIntroduce());
-
-            Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", cloudName,
-                "api_key", apiKey,
-                "api_secret", apiSecret));
-            // Upload file lên Cloudinary
-            Map uploadResult = cloudinary.uploader().upload(dto.getAvatar().getBytes(), ObjectUtils.asMap(
-                "folder", "BeesMeal"
-            ));
-            // Lấy URL của ảnh sau khi upload thành công
-            String imageUrl = (String) uploadResult.get("secure_url");
-            // Trả về URL của ảnh đã upload để sử dụng trong frontend hoặc để lưu vào cơ sở dữ liệu
-            combo.get().setAvatar(imageUrl);
-
             Product comboUpdate = productRepository.save(combo.get());
-
-            List<Product> list = new ArrayList<>();
-            for (Product p : dto.getListItem()) {
-
-                int count = 0;
-                for (ComboDetail i : combo.get().getListitem()) {
-                    if (p.getId() == i.getItem().getId()) {
-                        count++;
-                    }
-                }
-
-                if (count != 0) {
-                    list.add(p);
+            if(dto.getAvatar().isPresent()) {
+                try {
+                    byte[] imageData = dto.getAvatar().orElse(null).getBytes();
+                    Thread thread = new Thread(new ImageUploader(imageData, comboUpdate.getId(), productRepository));
+                    thread.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
 
-            for (Product p : list) {
-                ComboDetail detail = new ComboDetail();
-                detail.setCombo(comboUpdate);
-                detail.setItem(p);
-                detail.setNameProduct(p.getNameProduct());
-                detail.setPrice(p.getPrice());
-                detail.setCreatedAt(LocalDate.now());
-                detail.setUpdateAt(LocalDate.now());
-                ComboDetail detail1 = detailRepository.save(detail);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         return "update thành công";
     }
+
+    @Override
+    public String changeProduct(ChangeProductDTO dto, Integer id){
+        Product combo = productRepository.findById(id).orElseThrow();
+        if(dto.getListPorduct() == null) return null;
+        List<ProductDTO> list = dto.getListPorduct();
+        for (int i = list.size() - 1; i >= 0; i--) {
+            if (list.get(i).getQuantity() <= 0) {
+                if (detailRepository.findByComboAndProduct(id, list.get(i).getId()) != null){
+                    ComboDetail detail = detailRepository.findByComboAndProduct(id, list.get(i).getId());
+                    detailRepository.delete(detail);
+                }
+                list.remove(i);
+            }
+        }
+
+        long price = 0;
+        for (ProductDTO p : list) {
+            if (detailRepository.findByComboAndProduct(id, p.getId()) != null) {
+                ComboDetail detail = detailRepository.findByComboAndProduct(id, p.getId());
+                detail.setQuantity(p.getQuantity());
+                detailRepository.save(detail);
+            } else {
+                Product product = productRepository.getById(p.getId());
+                ComboDetail detail = new ComboDetail();
+                detail.setCombo(combo);
+                detail.setItem(product);
+                detail.setNameProduct(p.getNameProduct());
+                detail.setPrice(p.getPrice());
+                detail.setQuantity(p.getQuantity());
+                detail.setCreatedAt(LocalDate.now());
+                detail.setUpdateAt(LocalDate.now());
+                detailRepository.save(detail);
+            }
+
+            Product product = productRepository.getById(p.getId());
+            price = price + (product.getPrice()*p.getQuantity());
+        }
+        combo.setPrice(price);
+        productRepository.save(combo);
+        return "thành công";
+    };
 
     @Override
     public Page<ProductCard> findBySearch(ProductSearchRequest model) {
@@ -405,6 +378,7 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+
     private List<ProductCard> fromProductList(List<Product> productList) {
         List<ProductCard> productCardList = new ArrayList<>();
         for (Product product : productList) {
@@ -420,4 +394,16 @@ public class ProductServiceImpl implements ProductService {
         }
         return productCardList;
     }
+
+    @Override
+    public List<ProductProxy> getProductNotCOmbo(Integer id){
+        List<ProductProxy> list = productRepository.getProductByCombo(id);
+        for (int i = list.size() - 1; i >= 0; i--) {
+            if(productRepository.findById(list.get(i).getId()).get().getCategory().getId() == 1) {
+                list.remove(i);
+            }
+        }
+        return list;
+    };
+
 }

@@ -1,5 +1,7 @@
 package com.poly.bookingapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -50,8 +52,10 @@ public class Discount {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by", referencedColumnName = "id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Admin updatedBy;
 
     @OneToMany(mappedBy = "discount", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Product> listProduct;
 }

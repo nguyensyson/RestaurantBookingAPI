@@ -23,6 +23,7 @@ public class Invoice {
     private String categoryDiningRoom;
     private String diningRoom;
     private String diningTable;
+    private Integer oderStatus;
     private Long upfrontPrice;
     private Long originalPrice;
     private Long actualPrice;
