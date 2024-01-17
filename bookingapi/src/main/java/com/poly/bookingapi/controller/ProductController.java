@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/view/product")
@@ -43,8 +44,12 @@ public class ProductController {
     }
 
     @GetMapping("/getAll/{id}")
-    public List<ProductProxy> getAll(@PathVariable Integer id) {
-        return productService.getAll(id);
+    public List<ProductProxy> getAll(@PathVariable Optional<Integer> id) {
+        return productService.getAll(id.orElse(0));
     }
 
+    @GetMapping("/getAllNotCombo/{id}")
+    public List<ProductProxy> getAllNotCombo(@PathVariable Optional<Integer> id) {
+        return productService.getProductNotCOmbo(id.orElse(0));
+    }
 }

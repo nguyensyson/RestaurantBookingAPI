@@ -18,11 +18,12 @@ ReservationService {
 //    Integer countReservation();
 //    void addVoucher(Reservation reservation,Integer voucher);
     String changeStatus(ChangeStatusDTO dto, Integer id);
-    Reservation detailReservation(Integer id);
+    ReservationViewDTO detailReservation(Integer id);
     String updateByClient(ReservationAddDTO reservationAddDTO, Integer id);
     String updateByAdmin(ReservationUpdateDTO reservationAddDTO, Integer id);
     Page<ReservationViewDTO> getReservationByUser(Integer id, ReservationSortRequest model);
     String changePlaces(ChangePlacesDTO dto, Integer idResercation);
     String changeProduct(ChangeProductDTO dto, Integer idResercation);
     String arrangeSeats(ChangePlacesDTO dto, Integer idResercation);
+    Invoice invoice(Integer id);
 }

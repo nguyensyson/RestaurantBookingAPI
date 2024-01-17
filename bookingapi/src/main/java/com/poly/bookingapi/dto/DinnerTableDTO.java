@@ -13,10 +13,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DinnerTableDTO {
-
-    private Integer id;
-    private String tableCode;
     private Integer numberOfSeats;
-    private Integer status;
     private Integer idRoom;
 }

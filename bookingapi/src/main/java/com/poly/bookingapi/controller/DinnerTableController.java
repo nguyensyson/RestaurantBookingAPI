@@ -19,8 +19,13 @@ public class DinnerTableController {
     private DinnerTableService dinnerTableService;
 
     @GetMapping("api/view/dinner-table/get-all")
-    public ResponseEntity<Page<DinnerTableDTO>> getAllDinnerTable(@RequestBody DinnerTableRequest request) {
-        return ResponseEntity.ok(dinnerTableService.getAll(request));
+    public ResponseEntity<List<DinnerTable>> getAllDinnerTable() {
+        return ResponseEntity.ok(dinnerTableService.getAll());
+    }
+
+    @GetMapping("api/view/dinner-table/detail/{id}")
+    public ResponseEntity<DinnerTable> detailDinnerTable(@PathVariable Integer id) {
+        return ResponseEntity.ok(dinnerTableService.detail(id));
     }
 
     @PostMapping("api/admin/dinner-table/add")
@@ -38,8 +43,14 @@ public class DinnerTableController {
         return ResponseEntity.ok(dinnerTableService.delete(id));
     }
 
-    @GetMapping("api/view/dinner-table/findByDinningRoomId/{id}")
-    public List<DinnerTableProxy> findByDinningRoomId(@PathVariable Integer id) {
-        return dinnerTableService.getAllByDiningRoomId(id);
+    @GetMapping("api/view/dinner-table/findByDinningRoomId/{id}/{idRoom}")
+    public List<DinnerTableProxy> findByDinningRoomId(@PathVariable Integer id,
+                                                      @PathVariable Integer idRoom) {
+        return dinnerTableService.getAllByDiningRoomId(id, idRoom);
+    }
+
+    @GetMapping("api/view/dinner-table/findByRoomId/{id}")
+    public List<DinnerTableProxy> findByRoomId(@PathVariable Integer id) {
+        return dinnerTableService.getAllByRoomId(id);
     }
 }

@@ -1,6 +1,7 @@
 package com.poly.bookingapi.service.impl;
 
 import com.poly.bookingapi.dto.DiscountDTO;
+import com.poly.bookingapi.dto.DiscountViewDTO;
 import com.poly.bookingapi.dto.ProductDTO;
 import com.poly.bookingapi.entity.Discount;
 import com.poly.bookingapi.entity.Product;
@@ -15,6 +16,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class DiscountServiceImpl implements DiscountService {
@@ -25,8 +29,6 @@ public class DiscountServiceImpl implements DiscountService {
     @Autowired
     private ProductRepository productRepository;
 
-
-
     @Override
     public Discount add(DiscountDTO discountDTO) {
         Discount discount = new Discount();
@@ -34,17 +36,19 @@ public class DiscountServiceImpl implements DiscountService {
         discount.setDiscountValue(discountDTO.getDiscountValue());
         discount.setIntroduce(discountDTO.getIntroduce());
         discount.setCreateAt(LocalDate.now());
+        discount.setStatus(1);
+        discount.setStartDate(discountDTO.getStartDate());
+        discount.setEndDate(discountDTO.getEndDate());
         Discount discountAdd = discountRepository.save(discount);
-        if(discountDTO.getGetListProduct() != null){
-            for (ProductDTO list: discountDTO.getGetListProduct()) {
-                Product product = productRepository.getById(list.getId());
+        if(discountDTO.getListProduct() != null){
+            for (Integer i : discountDTO.getListProduct()) {
+                Product product = productRepository.getById(i);
                 product.setDiscount(discountAdd);
                 product.setNewPrice(product.getPrice() - ((product.getDiscount().getDiscountValue() * product.getPrice()))/100);
                 productRepository.save(product);
             }
         }
         return discountAdd;
-//        return null;
     }
 
     @Override
@@ -54,43 +58,19 @@ public class DiscountServiceImpl implements DiscountService {
         optional.get().setUpdateAt(LocalDate.now());
         optional.get().setNameDiscount(discountDTO.getNameDiscount());
         optional.get().setIntroduce(discountDTO.getIntroduce());
+        optional.get().setStartDate(discountDTO.getStartDate());
+        optional.get().setEndDate(discountDTO.getEndDate());
         Discount discountUpdate = discountRepository.save(optional.get());
 
-        List<Product> productList = new ArrayList<>();
-        for (ProductDTO d : discountDTO.getGetListProduct()) {
-            int count = 0;
-            for (Product p : discountUpdate.getListProduct()) {
-                if(d.getId() == p.getId()) {
-                    count++;
-                }
+        if(discountDTO.getListProduct() != null){
+            for (Integer i : discountDTO.getListProduct()) {
+                Product product = productRepository.getById(i);
+                product.setDiscount(discountUpdate);
+                product.setNewPrice(product.getPrice() - ((product.getDiscount().getDiscountValue() * product.getPrice()))/100);
+                productRepository.save(product);
             }
-
-            if(count != 0) {
-                productList.add(productRepository.findById(d.getId()).get());
-            }
-        }
-
-        for (Product p : productList) {
-            p.setDiscount(discountUpdate);
-            productRepository.save(productRepository.findById(p.getId()).get());
         }
         return discountUpdate;
-//        return  optional.map(discount -> {
-//            discount.setNameDiscount(discountDTO.getNameDiscount());
-//            discount.setDiscountValue(discountDTO.getDiscountValue());
-//            discount.setIntroduce(discountDTO.getIntroduce());
-//            if(discountDTO.getGetListProduct() != null){
-//                for (ProductDTO list: discountDTO.getGetListProduct()) {
-//                    list.setDiscount(discountRepository.save(discount));
-//                    Product product = productRepository.getById(list.getId());
-//                    product.setDiscount(list.getDiscount());
-//                    product.setNewPrice(product.getPrice() - ((product.getDiscount().getDiscountValue() * product.getPrice()))/100);
-//                    productRepository.save(product);
-//                }
-//            }
-//            return discountRepository.save(discount);
-//        }).orElse(null);
-//        return null;
     }
 
     @Override
@@ -109,8 +89,17 @@ public class DiscountServiceImpl implements DiscountService {
     }
 
     @Override
-    public Discount getById(Integer id) {
-        return discountRepository.getById(id);
+    public DiscountViewDTO getById(Integer id) {
+        Discount discount = discountRepository.getById(id);
+        DiscountViewDTO dto = new DiscountViewDTO();
+        dto.setIntroduce(discount.getIntroduce());
+        dto.setDiscountValue(discount.getDiscountValue());
+        dto.setStatus(discount.getStatus());
+        dto.setNameDiscount(discount.getNameDiscount());
+        dto.setEndDate(discount.getEndDate());
+        dto.setStartDate(discount.getStartDate());
+        dto.setListProduct(productRepository.getProductByDiscount(id));
+        return dto;
     }
 
     @Override
@@ -125,5 +114,31 @@ public class DiscountServiceImpl implements DiscountService {
             discountRepository.save(discount);
             return discount;
         }).orElse(null);
+    }
+
+    @Override
+    public List<Discount> getALL(){
+        return discountRepository.findAll();
+    };
+
+    public void main(String[] args) {
+
+        List<Discount> list = discountRepository.findAll();
+        for (Discount i : list
+             ) {
+            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+            scheduler.scheduleAtFixedRate(() -> checkDiscountStatus(i), 0, 1, TimeUnit.HOURS);
+        }
+
+    }
+
+    private void checkDiscountStatus(Discount discount) {
+        LocalDate currentDate = LocalDate.now();
+
+        if (currentDate.isAfter(discount.getEndDate())) {
+            Discount discount1 = discountRepository.getById(discount.getId());
+            discount1.setStatus(0);
+            discountRepository.save(discount1);
+        }
     }
 }

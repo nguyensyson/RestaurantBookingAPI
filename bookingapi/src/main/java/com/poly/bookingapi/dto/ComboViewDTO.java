@@ -1,9 +1,11 @@
 package com.poly.bookingapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.poly.bookingapi.entity.CategoryProduct;
 import com.poly.bookingapi.entity.ComboDetail;
 import com.poly.bookingapi.entity.ImageProduct;
 import com.poly.bookingapi.entity.Product;
+import com.poly.bookingapi.proxydto.ProductProxy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,13 +19,11 @@ import java.util.List;
 public class ComboViewDTO {
 
     private Integer id;
-    private CategoryProduct category;
     private String avatar;
-    private List<ImageProduct> images;
     private String name;
     private Long price;
-    private Integer discount;
     private String introduce;
+    private Integer discount;
+    private List<ProductProxy> listItem;
     private Integer status;
-    private List<ComboDetail> listItem;
 }

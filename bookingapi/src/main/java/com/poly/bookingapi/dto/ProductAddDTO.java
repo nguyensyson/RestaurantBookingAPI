@@ -16,4 +16,5 @@ public class ProductAddDTO {
     private MultipartFile images;
     private Long price;
     private String introduce;
+    private Integer status;
 }

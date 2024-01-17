@@ -72,7 +72,9 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationViewDTO convertToReservationViewDTO(Reservation reservation) {
         ReservationViewDTO viewDTO = new ReservationViewDTO();
         viewDTO.setId(reservation.getId());
-        viewDTO.setReservationDate(reservation.getReservationDate().atTime(reservation.getStartTime()));
+        if(reservation.getReservationDate() != null) {
+            viewDTO.setReservationDate(reservation.getReservationDate().atTime(reservation.getStartTime()));
+        }
         viewDTO.setCreatedAt(reservation.getCreatedAt());
         viewDTO.setSdt(reservation.getSdt());
         viewDTO.setFullname(reservation.getFullNameClient());
@@ -117,10 +119,22 @@ public class ReservationServiceImpl implements ReservationService {
             reservation.setVoucher(voucher);
             reservation.setActualPrice((dto.getOriginalPrice() * voucher.getVoucherValue()) / 100);
         }
-//        reservation.setUpfrontPrice(dto.getUpfrontPrice());
-        reservation.setOriginalPrice(dto.getOriginalPrice());
-//        reservation.setActualPrice(dto.getActualPrice());
-//        reservation.setPriceToPay(dto.getPriceToPay());
+
+        long price = 0;
+        if (dto.getListPorduct().size() != 0) {
+            for (ProductDTO p : dto.getListPorduct()) {
+                Product product = productRepository.getById(p.getId());
+                if(product.getDiscount() != null) {
+                    price = price + (product.getNewPrice()*p.getQuantity());
+                } else {
+                    price = price + (product.getPrice()*p.getQuantity());
+                }
+            }
+        }
+        reservation.setUpfrontPrice(Long.valueOf(0));
+        reservation.setOriginalPrice(price);
+        reservation.setActualPrice(price);
+        reservation.setPriceToPay(price);
         reservation.setUpdateAt(LocalDate.now());
         reservation.setCreatedAt(LocalDate.now());
         reservation.setStatus(reservationStatusRepository.findById(dto.getStatus()).get());
@@ -135,7 +149,11 @@ public class ReservationServiceImpl implements ReservationService {
                 reservationProduct.setAvatarProduct(product.getAvatar());
                 reservationProduct.setNameProduct(product.getNameProduct());
                 reservationProduct.setNameProduct(p.getNameProduct());
-                reservationProduct.setPrice(p.getPrice());
+                if(product.getDiscount() != null) {
+                    reservationProduct.setPrice(product.getNewPrice());
+                } else {
+                    reservationProduct.setPrice(product.getPrice());
+                }
                 reservationProduct.setQuantity(p.getQuantity());
                 reservationProduct.setSubToTal(p.getPrice() * p.getQuantity());
                 reservationProduct.setCreatedAt(LocalDate.now());
@@ -154,21 +172,36 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setSdt(dto.getSdt());
         reservation.setFullNameClient(dto.getFullname());
         reservation.setNumberOfPeopleBooked(dto.getNumberOfPeopleBooked());
-        reservation.setReservationDate(dto.getDateTime().toLocalDate());
-        reservation.setStartTime(dto.getDateTime().toLocalTime());
-        // thời gian delay của khách mặc định cộng thêm 15p
-        reservation.setDelayTime(dto.getDateTime().toLocalTime().plusMinutes(15));
-        // thời gian kết thúc của khách dự trù là 2 tiếng
-        reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
-        
-        reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
+        if(dto.getDateTime() != null) {
+            reservation.setReservationDate(dto.getDateTime().toLocalDate());
+            reservation.setStartTime(dto.getDateTime().toLocalTime());
+            // thời gian delay của khách mặc định cộng thêm 15p
+            reservation.setDelayTime(dto.getDateTime().toLocalTime().plusMinutes(15));
+            // thời gian kết thúc của khách dự trù là 2 tiếng
+            reservation.setEndTime(dto.getDateTime().toLocalTime().plusHours(2));
+        }
+
+        if(dto.getIdCategoryDiningRoom() != null) {
+            reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
+        }
         if (clientRepository.getBySDT(dto.getSdt()) != null) {
             reservation.setClient(clientRepository.getBySDT(dto.getSdt()));
         }
-        reservation.setUpfrontPrice(dto.getUpfrontPrice());
-        reservation.setOriginalPrice(dto.getOriginalPrice());
-        reservation.setActualPrice(dto.getActualPrice());
-        reservation.setPriceToPay(dto.getPriceToPay());
+        long price = 0;
+        if (dto.getListPorduct().size() != 0) {
+            for (ProductDTO p : dto.getListPorduct()) {
+                Product product = productRepository.getById(p.getId());
+                if(product.getDiscount() != null) {
+                    price = price + (product.getNewPrice()*p.getQuantity());
+                } else {
+                    price = price + (product.getPrice()*p.getQuantity());
+                }
+            }
+        }
+        reservation.setUpfrontPrice(Long.valueOf(0));
+        reservation.setOriginalPrice(price);
+        reservation.setActualPrice(price);
+        reservation.setPriceToPay(price);
         reservation.setUpdateAt(LocalDate.now());
         reservation.setCreatedAt(LocalDate.now());
         reservation.setStatus(reservationStatusRepository.findById(2).get());
@@ -181,7 +214,11 @@ public class ReservationServiceImpl implements ReservationService {
                 reservationProduct.setReservation(reservationAdd);
                 reservationProduct.setProduct(product);
                 reservationProduct.setNameProduct(p.getNameProduct());
-                reservationProduct.setPrice(p.getPrice());
+                if(product.getDiscount() != null) {
+                    reservationProduct.setPrice(product.getNewPrice());
+                } else {
+                    reservationProduct.setPrice(product.getPrice());
+                }
                 reservationProduct.setQuantity(p.getQuantity());
                 reservationProductRepository.save(reservationProduct);
             }
@@ -249,6 +286,7 @@ public class ReservationServiceImpl implements ReservationService {
         int numberPeople = reservation.getNumberOfPeopleBooked();
         if (reservation.getCategoryDiningRoom().getId() != dto.getIdCategoryDiningRoom()) {
             reservation.setCategoryDiningRoom(categoryDiningRoomRepository.findById(dto.getIdCategoryDiningRoom()).get());
+            reservation.setUpdateAt(LocalDate.now());
             reservationRepository.save(reservation);
         }
 
@@ -319,11 +357,15 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public String changeProduct(ChangeProductDTO dto, Integer idResercation) {
         Reservation reservation = reservationRepository.findById(idResercation).get();
+        long price = 0;
         for (ProductDTO p : dto.getListPorduct()) {
+
             if (reservationProductRepository.findByReservationAndProduct(reservation.getId(), p.getId()) != null) {
                 ReservationProduct reservationProduct = reservationProductRepository.findByReservationAndProduct(reservation.getId(), p.getId());
-                reservationProduct.setQuantity(p.getQuantity());
-                reservationProductRepository.save(reservationProduct);
+                if(reservationProduct.getQuantity() < p.getQuantity()) {
+                    reservationProduct.setQuantity(p.getQuantity());
+                    reservationProductRepository.save(reservationProduct);
+                }
             } else {
                 Product product = productRepository.getById(p.getId());
                 ReservationProduct reservationProduct = new ReservationProduct();
@@ -334,20 +376,18 @@ public class ReservationServiceImpl implements ReservationService {
                 reservationProduct.setQuantity(p.getQuantity());
                 reservationProductRepository.save(reservationProduct);
             }
+
+            Product product = productRepository.getById(p.getId());
+            price = price + (product.getPrice()*p.getQuantity());
         }
 
-        reservation.setOriginalPrice(dto.getOriginalPrice());
-        if (reservation.getVoucher() != null) {
-            reservation.setActualPrice((dto.getOriginalPrice() * reservation.getVoucher().getVoucherValue()) / 100);
-        } else {
-            reservation.setActualPrice(dto.getOriginalPrice());
-        }
-//        reservation.setPriceToPay(dto.getPriceToPay());
+        reservation.setOriginalPrice(price);
+        reservation.setPriceToPay(price);
+        reservation.setActualPrice(price);
+        reservation.setUpdateAt(LocalDate.now());
         reservationRepository.save(reservation);
         return "Cập nhật thành công";
-    }
-
-    ;
+    };
 
     @Override
     public String arrangeSeats(ChangePlacesDTO dto, Integer idResercation) {
@@ -387,14 +427,48 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = reservationRepository.findById(id).get();
         reservation.setNumberOfPeopleBooked(dto.getNumberOfPeopleBooked());
         reservation.setStatus(reservationStatusRepository.findById(dto.getStatus()).get());
+        reservation.setUpdateAt(LocalDate.now());
+
+        if(dto.getStatus() == 4 || dto.getStatus() == 5) {
+            List<DinnerTable> list = dinnerTableRepository.getByReservation(id);
+            for (DinnerTable t : list) {
+                DinnerTable dinnerTable = dinnerTableRepository.findById(t.getId()).get();
+                dinnerTable.setStatus(1);
+                dinnerTableRepository.save(dinnerTable);
+            }
+            List<TableDetail> list1 = tableDetailRepository.getByReservationId(id);
+            for (TableDetail i : list1
+                 ) {
+                TableDetail tableDetail = tableDetailRepository.findById(i.getId()).get();
+                tableDetailRepository.delete(tableDetail);
+            }
+        }
         reservationRepository.save(reservation);
         return "Cập nhật thành công";
     }
 
     @Override
-    public Reservation detailReservation(Integer id) {
+    public ReservationViewDTO detailReservation(Integer id) {
         Reservation optionalReservation = reservationRepository.findById(id).get();
-        return optionalReservation;
+        ReservationViewDTO dto = new ReservationViewDTO();
+        dto.setId(optionalReservation.getId());
+        dto.setSdt(optionalReservation.getSdt());
+        dto.setFullname(optionalReservation.getFullNameClient());
+        dto.setIdCategoryDiningRoom(optionalReservation.getCategoryDiningRoom().getId());
+        dto.setOderStatus(optionalReservation.getStatus());
+        dto.setNumberOfPeopleBooked(optionalReservation.getNumberOfPeopleBooked());
+        if(optionalReservation.getReservationDate() != null) {
+            dto.setReservationDate(optionalReservation.getReservationDate().atTime(optionalReservation.getStartTime()));
+        }
+
+        List<DiningRoom> rooms = diningRoomRepository.getAllDESC(id, optionalReservation.getCategoryDiningRoom().getId());
+        dto.setDiningRoom(rooms);
+        dto.setDinnerTables(dinnerTableRepository.getAllDESC(id, rooms.get(0).getId()));
+        dto.setUpfrontPrice(optionalReservation.getUpfrontPrice());
+        dto.setOriginalPrice(optionalReservation.getOriginalPrice());
+        dto.setActualPrice(optionalReservation.getActualPrice());
+        dto.setPriceToPay(optionalReservation.getPriceToPay());
+        return dto;
     }
 
     @Override
@@ -452,4 +526,44 @@ public class ReservationServiceImpl implements ReservationService {
 
         return new PageImpl<>(viewDTOS, getList.getPageable(), getList.getTotalElements());
     }
+
+    @Override
+    public Invoice invoice(Integer id){
+        Invoice invoice = new Invoice();
+        Reservation optionalReservation = reservationRepository.findById(id).orElseThrow();
+        invoice.setId(optionalReservation.getId());
+        invoice.setSdt(optionalReservation.getSdt());
+        invoice.setFullname(optionalReservation.getFullNameClient());
+        invoice.setCategoryDiningRoom(optionalReservation.getCategoryDiningRoom().getTitle());
+        invoice.setOderStatus(optionalReservation.getStatus().getId());
+        invoice.setNumberOfPeopleBooked(optionalReservation.getNumberOfPeopleBooked());
+        if(optionalReservation.getReservationDate() != null) {
+            invoice.setReservationDate(optionalReservation.getReservationDate().atTime(optionalReservation.getStartTime()));
+        }
+        if(diningRoomRepository.getByReservation(id) != null) {
+            invoice.setDiningRoom(diningRoomRepository.getByReservation(id).getName());
+        }
+        if(dinnerTableRepository.getByReservation(id).size() != 0) {
+            List<DinnerTable> list = dinnerTableRepository.getByReservation(id);
+            String table = "";
+            for (int i = 0; i < list.size(); i++) {
+                table += list.get(i).getTableCode();
+
+                if (i < list.size() - 1) {
+                    table += ", ";
+                }
+            }
+            invoice.setDiningTable(table);
+        }
+        invoice.setUpfrontPrice(optionalReservation.getUpfrontPrice());
+        invoice.setOriginalPrice(optionalReservation.getOriginalPrice());
+        invoice.setActualPrice(optionalReservation.getActualPrice());
+        invoice.setPriceToPay(optionalReservation.getPriceToPay());
+        if(productRepository.getByReservation(id) != null) {
+            invoice.setProducts(productRepository.getByReservation(id));
+        }
+        System.out.print("oke");
+        return invoice;
+    };
+
 }

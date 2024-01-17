@@ -1,5 +1,7 @@
 package com.poly.bookingapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.poly.bookingapi.dto.DinnerTableDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,6 +32,7 @@ public class DinnerTable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dining_room_id", referencedColumnName = "id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private DiningRoom diningRoom;
 
     @Column(name = "status")
@@ -44,11 +47,7 @@ public class DinnerTable {
     private LocalDate updateAt;
 
     @OneToMany(mappedBy = "dinnerTable", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<TableDetail> listTableDetail;
 
-    public DinnerTableDTO loadData (DinnerTableDTO dinnerTableDTO){
-        dinnerTableDTO.setNumberOfSeats(numberOfSeats);
-        dinnerTableDTO.setStatus(status);
-        return dinnerTableDTO;
-    }
 }

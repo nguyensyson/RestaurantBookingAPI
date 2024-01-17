@@ -35,13 +35,18 @@ public class ReservarionController {
 //    }
 
     @PostMapping("/api/user/reservation/getAllByClient/{id}")
-    public ResponseEntity<Page<ReservationViewDTO>>getAllByClient(@PathVariable(value = "id") Integer id, @RequestBody ReservationSortRequest model){
+    public ResponseEntity<Page<ReservationViewDTO>>getAllByClient(@PathVariable(value = "id") Integer id,
+                                                                  @RequestBody ReservationSortRequest model){
         return ResponseEntity.ok(reservationService.getReservationByUser(id, model));
     }
 
     @GetMapping("/api/admin/reservation/detail/{id}")
-    public ResponseEntity<Reservation> detailReservation(@PathVariable("id") Integer id){
+    public ResponseEntity<ReservationViewDTO> detailReservation(@PathVariable("id") Integer id){
         return ResponseEntity.ok(reservationService.detailReservation(id));
+    }
+    @GetMapping("/api/view/reservation/invoice/{id}")
+    public ResponseEntity<Invoice> invoice(@PathVariable("id") Integer id){
+        return ResponseEntity.ok(reservationService.invoice(id));
     }
     //tạo bởi khách hàng
     @PostMapping("/api/view/reservation/addByUser")

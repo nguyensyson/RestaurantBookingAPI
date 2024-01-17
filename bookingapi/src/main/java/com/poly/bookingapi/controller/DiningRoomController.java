@@ -17,7 +17,7 @@ public class DiningRoomController {
     private DiningRoomService diningRoomService;
 
     @GetMapping("api/view/dining-room/get")
-    public ResponseEntity<List<DiningRoomDTO>> getAllDiningRoom(){
+    public ResponseEntity<List<DiningRoom>> getAllDiningRoom(){
         return ResponseEntity.ok(diningRoomService.getAll());
     }
 
@@ -26,8 +26,18 @@ public class DiningRoomController {
         return ResponseEntity.ok(diningRoomService.getByIdCategory(id));
     }
 
+    @GetMapping("api/view/dining-room/detail/{id}")
+    public ResponseEntity<DiningRoom> detail(@PathVariable Integer id){
+        return ResponseEntity.ok(diningRoomService.detail(id));
+    }
+
     @PostMapping("api/admin/dining-room/add")
     public ResponseEntity<DiningRoom>addDiningRoom(@RequestBody DiningRoomDTO diningRoomDTO){
         return ResponseEntity.ok(diningRoomService.add(diningRoomDTO));
+    }
+
+    @PostMapping("api/admin/dining-room/update/{id}")
+    public ResponseEntity<DiningRoom>updateDiningRoom(@PathVariable Integer id, @RequestBody DiningRoomDTO diningRoomDTO){
+        return ResponseEntity.ok(diningRoomService.update(diningRoomDTO, id));
     }
 }
