@@ -135,6 +135,9 @@ public class ProductServiceImpl implements ProductService {
         dto.setAvatar(p.getAvatar());
         dto.setId(p.getId());
         dto.setIntroduce(p.getIntroduce());
+        if(p.getDiscount() != null) {
+            dto.setDiscount(p.getDiscount().getDiscountValue());
+        }
         dto.setName(p.getNameProduct());
         dto.setPrice(p.getPrice());
         dto.setListItem(productRepository.getProductByCombo(p.getId()));

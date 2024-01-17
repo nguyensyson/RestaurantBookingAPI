@@ -23,6 +23,7 @@ public class ComboViewDTO {
     private String name;
     private Long price;
     private String introduce;
+    private Integer discount;
     private List<ProductProxy> listItem;
     private Integer status;
 }
